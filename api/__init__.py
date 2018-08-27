@@ -50,7 +50,7 @@ def handle_message(event):
     if event.message.text=='meeting!':
         meet_id=''.join(random.choice(string.digits) for x in range(5))
         
-        conn = sqlite.connect('create_check.db')
+        conn = sqlite.connect('/var/www/line_saying/api/create_check.db')
         c = conn.cursor()
         c.execute("INSERT INTO meet_check"+"(api_request,user_id) VALUES ('"+meet_id+"','"+event.source.user_id+"')")
         conn.commit()
@@ -63,7 +63,7 @@ def handle_message(event):
 @app.route('/create_meet', methods=['POST'])
 def create_meet():
     web_id=request.get_json()['web_id']
-    conn = sqlite.connect('create_check.db')
+    conn = sqlite.connect('/var/www/line_saying/api/create_check.db')
     c = conn.cursor()
     ans=c.execute("SELECT * FROM meet_check WHERE api_request='%s'" %(web_id))
     if ans != []:

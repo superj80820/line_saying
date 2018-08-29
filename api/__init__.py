@@ -65,18 +65,20 @@ def create_meet():
     web_id=request.get_json()['web_id']
     conn = sqlite.connect('/var/www/line_saying/api/create_check.db')
     c = conn.cursor()
-    ans=c.execute("SELECT * FROM meet_check WHERE api_request='%s'" %(web_id))
-    if ans != []:
-        sent_id=list(ans)[0][2]
-        c.execute("UPDATE meet_check SET web_pass ='pass' WHERE api_request ='%s'"%(web_id))
-        line_bot_api.push_message(sent_id, TextSendMessage(text='已驗證成功~'))
-        conn.commit()
-        conn.close()
-        return "create done"
-    else:
-        conn.commit()
-        conn.close()
-        return "create fail"
+    try:
+        ans=c.execute("SELECT * FROM meet_check WHERE api_request='%s'" %(web_id))
+        if ans != []:
+            sent_id=list(ans)[0][2]
+            c.execute("UPDATE meet_check SET web_pass ='pass' WHERE api_request ='%s'"%(web_id))
+            line_bot_api.push_message(sent_id, TextSendMessage(text='已驗證成功~'))
+            conn.commit()
+            conn.close()
+            return "create done"
+    except:
+        None
+    conn.commit()
+    conn.close()
+    return "create fail"
 
 if __name__ == "__main__":
     app.run()

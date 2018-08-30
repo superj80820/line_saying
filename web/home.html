@@ -10,7 +10,7 @@
 	<body>
 		<!-- Header -->
 			<header id="header">
-				<h1><a href="#">演講者平台<a>&emsp;&emsp;LINE BOT ID:@etx7735c&emsp;&emsp;邀請碼:<a id="WebId2"></a></a></a></h1>
+				<h1><a href="#">演講者平台<a>&emsp;&emsp;LINE BOT ID:@etx7735c&emsp;&emsp;邀請碼:<a id="WebId"></a></a></a></h1>
 				<a href="#menu">選單</a>
 			</header>
 		<!-- Nav -->
@@ -119,16 +119,13 @@
 			<script src="assets/js/skel.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+			<script src="assets/js/jquery.cookie.js"></script>
 			<script type="text/javascript">
-                      $(document).ready(function(){
-                        var result = "";
-                        var refDoc = $(window.opener.document);
-                        var value = $("#SentId", refDoc).val();
-                        result = value;
-                        //$("#WebId").val(result);
-			//document.getElementById("WebId2").value = result;
-			$(WebId2).text(result)
-        	        });
-	                </script>
+			$(document).ready(function(){
+                        	var getid = $.cookie("LineSayId");
+	                        console.log(getid);
+				$(WebId).text(getid);
+			});
+			</script>
 	</body>
 </html>

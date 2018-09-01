@@ -1,13 +1,13 @@
 
 # coding: utf-8
-
-# In[59]:
-
+#圖片新增的排序是否為最新 須測試(應該是正常)
 
 import string
+import re
 import random
+import requests
 import sqlite3 as sqlite
-from flask import Flask, request, abort
+from flask import Flask, request, abort, jsonify
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -16,17 +16,16 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
+    MessageEvent, TextMessage, TextSendMessage, ImageMessage, VideoMessage, AudioMessage
 )
 
 app = Flask(__name__)
 
-line_bot_api = LineBotApi('D9I+Oxtoll926dCqHX3bnx6fhiAqKt28n/PQYmaeGjsmG3Uq+W+tspiRQaAW6AZTQKpZuvi9VAFFpL8+EBhExS1U/zjqRCoVF2lpDwFgDvf6k9bOrlgB8fEcBJCgTd9g41oQ7iTMb3o0t2qPddQskgdB04t89/1O/w1cDnyilFU=')
+line_token = 'D9I+Oxtoll926dCqHX3bnx6fhiAqKt28n/PQYmaeGjsmG3Uq+W+tspiRQaAW6AZTQKpZuvi9VAFFpL8+EBhExS1U/zjqRCoVF2lpDwFgDvf6k9bOrlgB8fEcBJCgTd9g41oQ7iTMb3o0t2qPddQskgdB04t89/1O/w1cDnyilFU='
+line_bot_api = LineBotApi(line_token)
 handler = WebhookHandler('e840717929fb3e363919b0b31b86f056')
-
-
-# In[ ]:
-
+FileRout=''
+#/var/www/line_saying/api/
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -49,36 +48,149 @@ def callback():
 def handle_message(event):
     if event.message.text=='meeting!':
         meet_id=''.join(random.choice(string.digits) for x in range(5))
-        
-        conn = sqlite.connect('/var/www/line_saying/api/create_check.db')
+        invite_id=''.join(random.choice(string.digits) for x in range(5))
+
+        conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
         c = conn.cursor()
-        c.execute("INSERT INTO meet_check"+"(api_request,user_id) VALUES ('"+meet_id+"','"+event.source.user_id+"')")
+        c.execute('INSERT INTO meet_check (api_request,user_id,invite_id) VALUES ("%s","%s","%s")'%(meet_id,event.source.user_id,invite_id))
         conn.commit()
         conn.close()
         
         line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text='已創建meeting~代碼是：\n%s'%(meet_id)))
+    elif re.match('[0-9]{5}$', event.message.text) != None:
+        invite_id = re.match('[0-9]{5}$', event.message.text).group(0)
+        
+        conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
+        c = conn.cursor()
+        api_request = c.execute('SELECT api_request FROM meet_check WHERE web_pass ="pass" AND invite_id ="%s"'%(invite_id))
+        api_request = api_request.fetchall()
+        if api_request != []:
+            try:
+                c.execute('INSERT INTO user_in_where (id,meet) VALUES ("%s","%s")'%(event.source.user_id,api_request[0][0]))
+            except:
+                c.execute('UPDATE user_in_where SET meet ="%s" WHERE id ="%s"'%(api_request[0][0],event.source.user_id))
+            line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text='已加入meeting囉~\n請問你要匿名還是公開姓名呢?'))
+        else:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text='目前沒有這個meeting壓...'))
+        conn.commit()
+        conn.close()
+    
+    elif event.message.text == "/public_yes":
+        user_name=line_bot_api.get_profile(event.source.user_id).display_name
+
+        conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
+        c = conn.cursor()
+        c.execute('UPDATE user_in_where SET public_name ="yes" WHERE id ="%s"'%(event.source.user_id))
+        c.execute('UPDATE user_in_where SET user_name ="%s" WHERE id ="%s"'%(user_name,event.source.user_id))
+        line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text='已公開~'))
+        conn.commit()
+        conn.close()
+
+    elif event.message.text == "/public_no":
+        line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text='好~以匿名~'))
+
+    elif event.message.text[0] == '?':
+        say=event.message.text[1:len(event.message.text)]
+
+        conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
+        c = conn.cursor()
+        meet_id = c.execute('SELECT meet FROM user_in_where WHERE id ="%s"'%(event.source.user_id))
+        meet_id = meet_id.fetchall()
+    
+        conn2 = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id[0][0]))
+        c2 = conn2.cursor()
+        c2.execute('INSERT INTO user_say (id,say,timestamp) VALUES ("%s","%s","%s")'%(event.source.user_id,say,str(event.timestamp)))
+        conn2.commit()
+        conn2.close()
+        line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text='收到留言!!\n如果要附加圖片~請直接傳圖喔'))
+
+        conn.commit()
+        conn.close()
+    
+    elif event.message.text=='test':
+        print(type(event.timestamp))
+        print(event.timestamp)
+        test=line_bot_api.get_profile(event.source.user_id).display_name
+        print(test)
+        headers = {'Content-Type':'application/json','Authorization':'Bearer %s'%(line_token)}
+        payload = {
+            'replyToken':event.reply_token,
+            'messages':[{"type":"text","text":"May I help you?"}]
+            }
+        res=requests.post('https://api.line.me/v2/bot/message/reply',headers=headers,json=payload)
+        # line_bot_api.reply_message(
+        #         event.reply_token,
+        #         TextSendMessage(text='已接收'))
+
+@handler.add(MessageEvent, message=(ImageMessage))
+def handle_content_message(event):
+    message_content = line_bot_api.get_message_content(event.message.id)
+
+    with open('%sdata/image/%s.jpg'%(FileRout,str(event.timestamp)), 'wb') as fd:
+        for chunk in message_content.iter_content():
+            fd.write(chunk)
+
+    conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
+    c = conn.cursor()
+    meet_id = c.execute('SELECT meet FROM user_in_where WHERE id ="%s"'%(event.source.user_id))
+    meet_id = meet_id.fetchall()
+
+    conn2 = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id[0][0]))
+    c2 = conn2.cursor()
+    get_all_timestamp=c2.execute('SELECT timestamp FROM user_say WHERE id ="%s"'%(event.source.user_id)).fetchall()
+    c2.execute('UPDATE user_say SET image ="https://messfar.com/line_saying/%s.jpg" WHERE timestamp ="%s"'%(str(event.timestamp),get_all_timestamp[len(get_all_timestamp)-1][0]))
+    conn2.commit()
+    conn2.close()
+    line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text='收到圖片囉!!'))
+
+    conn.commit()
+    conn.close()
             
 @app.route('/create_meet', methods=['POST'])
 def create_meet():
+    def meet_data(web_id):
+        conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,web_id))
+        c = conn.cursor()
+        data = 'id text,say text,timestamp text,image text'
+        c.execute('CREATE TABLE user_say(%s)'%(data))
+        conn.commit()
+        conn.close()
     web_id=request.get_json()['web_id']
-    conn = sqlite.connect('/var/www/line_saying/api/create_check.db')
+    conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
     c = conn.cursor()
     try:
         ans=c.execute("SELECT * FROM meet_check WHERE api_request='%s'" %(web_id))
         if ans != []:
             sent_id=list(ans)[0][2]
-            c.execute("UPDATE meet_check SET web_pass ='pass' WHERE api_request ='%s'"%(web_id))
+            c.execute('UPDATE meet_check SET web_pass ="pass" WHERE api_request ="%s"'%(web_id))
+            inite_id = c.execute('SELECT invite_id FROM meet_check WHERE api_request ="%s"'%(web_id))
+            inite_id = inite_id.fetchall()[0][0]
+            meet_data(web_id)
             line_bot_api.push_message(sent_id, TextSendMessage(text='已驗證成功~'))
             conn.commit()
             conn.close()
-            return "create done"
+            res={'invite_id':inite_id}
+            return jsonify(res)
     except:
         None
     conn.commit()
     conn.close()
     return "create fail"
+
 
 if __name__ == "__main__":
     app.run()

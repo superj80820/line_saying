@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+            <title>LINE-HACK2018</title>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <link rel="stylesheet" href="assets/css/main.css" />
+            <link rel="icon" href="images/logo.ico" type="image/x-icon" />
+            <script src="assets/js/html2canvas.js"></script>
+            <script type="text/javascript">
+                html2canvas(document.querySelector("#capture")).then(canvas => {
+                document.body.appendChild(canvas)
+                }); 
+            </script>
+    </head>
+<body>
+    <div id="capture" style="padding: 10px; background: #f5da55">
+        <h4 style="color: #000; ">Hello world!</h4>
+    </div>
+</body>
+</html>

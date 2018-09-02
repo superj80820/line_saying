@@ -5,6 +5,7 @@
 import string
 import re
 import random
+import ast
 import requests
 import sqlite3 as sqlite
 from flask import Flask, request, abort, jsonify
@@ -16,7 +17,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, ImageMessage, VideoMessage, AudioMessage
+    MessageEvent, TextMessage, TextSendMessage, ImageMessage, VideoMessage, AudioMessage, PostbackEvent
 )
 
 app = Flask(__name__)
@@ -26,6 +27,15 @@ line_bot_api = LineBotApi(line_token)
 handler = WebhookHandler('e840717929fb3e363919b0b31b86f056')
 FileRout=''
 #/var/www/line_saying/api/
+
+def USER_GET_MEET_ID(user_id):
+    conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
+    c = conn.cursor()
+    meet_id = c.execute('SELECT meet FROM user_in_where WHERE id ="%s"'%(user_id))
+    meet_id = meet_id.fetchall()[0][0]
+    conn.commit()
+    conn.close()
+    return meet_id
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -101,24 +111,16 @@ def handle_message(event):
 
     elif event.message.text[0] == '?':
         say=event.message.text[1:len(event.message.text)]
-
-        conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
-        c = conn.cursor()
-        meet_id = c.execute('SELECT meet FROM user_in_where WHERE id ="%s"'%(event.source.user_id))
-        meet_id = meet_id.fetchall()
     
-        conn2 = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id[0][0]))
-        c2 = conn2.cursor()
-        c2.execute('INSERT INTO user_say (id,say,timestamp) VALUES ("%s","%s","%s")'%(event.source.user_id,say,str(event.timestamp)))
-        conn2.commit()
-        conn2.close()
+        conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,USER_GET_MEET_ID(event.source.user_id)))
+        c = conn.cursor()
+        c.execute('INSERT INTO user_say (id,say,timestamp) VALUES ("%s","%s","%s")'%(event.source.user_id,say,str(event.timestamp)))
+        conn.commit()
+        conn.close()
         line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text='收到留言!!\n如果要附加圖片~請直接傳圖喔'))
 
-        conn.commit()
-        conn.close()
-    
     elif event.message.text=='test':
         print(type(event.timestamp))
         print(event.timestamp)
@@ -142,23 +144,64 @@ def handle_content_message(event):
         for chunk in message_content.iter_content():
             fd.write(chunk)
 
-    conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
+    conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,USER_GET_MEET_ID(event.source.user_id)))
     c = conn.cursor()
-    meet_id = c.execute('SELECT meet FROM user_in_where WHERE id ="%s"'%(event.source.user_id))
-    meet_id = meet_id.fetchall()
-
-    conn2 = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id[0][0]))
-    c2 = conn2.cursor()
-    get_all_timestamp=c2.execute('SELECT timestamp FROM user_say WHERE id ="%s"'%(event.source.user_id)).fetchall()
-    c2.execute('UPDATE user_say SET image ="https://messfar.com/line_saying/%s.jpg" WHERE timestamp ="%s"'%(str(event.timestamp),get_all_timestamp[len(get_all_timestamp)-1][0]))
-    conn2.commit()
-    conn2.close()
-    line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text='收到圖片囉!!'))
-
+    get_all_timestamp=c.execute('SELECT timestamp FROM user_say WHERE id ="%s"'%(event.source.user_id)).fetchall()
+    c.execute('UPDATE user_say SET image ="https://messfar.com/line_saying/%s.jpg" WHERE timestamp ="%s"'%(str(event.timestamp),get_all_timestamp[len(get_all_timestamp)-1][0]))
     conn.commit()
     conn.close()
+    line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text='收到圖片!!如果圖片要更換\n再傳一張就會覆蓋囉~'))
+
+@handler.add(PostbackEvent)
+def handle_postback(event):
+    vote_dict = ast.literal_eval(event.postback.data)
+    meet_id=USER_GET_MEET_ID(event.source.user_id)
+    print(vote_dict)
+
+    if vote_dict['type'] == 'vote': 
+        conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
+        c = conn.cursor()
+        user_id = str(c.execute('SELECT id FROM vote_%s'%(vote_dict['name'])).fetchall())
+        is_vote = re.search('%s,'%(event.source.user_id),user_id)
+        conn.commit()
+        conn.close()
+
+        if is_vote == None:
+            conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
+            c = conn.cursor()
+            if vote_dict['index'] == '1':
+                vote_temp=int(c.execute('SELECT one FROM vote_%s'%(vote_dict['name'])).fetchall()[0][0])
+                vote_temp+=1
+                vote_temp = str(vote_temp)
+                c.execute('UPDATE vote_%s SET one ="%s"'%(vote_dict['name'],vote_temp))
+            elif vote_dict['index'] == '2':
+                vote_temp=int(c.execute('SELECT two FROM vote_%s'%(vote_dict['name'])).fetchall()[0][0])
+                vote_temp+=1
+                vote_temp = str(vote_temp)
+                c.execute('UPDATE vote_%s SET two ="%s"'%(vote_dict['name'],vote_temp))
+            elif vote_dict['index'] == '3':
+                vote_temp=int(c.execute('SELECT three FROM vote_%s'%(vote_dict['name'])).fetchall()[0][0])
+                vote_temp+=1
+                vote_temp = str(vote_temp)
+                c.execute('UPDATE vote_%s SET three ="%s"'%(vote_dict['name'],vote_temp))
+            elif vote_dict['index'] == '4':
+                vote_temp=int(c.execute('SELECT four FROM vote_%s'%(vote_dict['name'])).fetchall()[0][0])
+                vote_temp+=1
+                vote_temp = str(vote_temp)
+                c.execute('UPDATE vote_%s SET four ="%s"'%(vote_dict['name'],vote_temp))
+            id_temp=c.execute('SELECT id FROM vote_%s'%(vote_dict['name'])).fetchall()[0][0]
+            id_temp='%s,%s'%(event.source.user_id,id_temp)
+            c.execute('UPDATE vote_%s SET id ="%s"'%(vote_dict['name'],id_temp))
+            conn.commit()
+            conn.close()
+
+            line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='感謝你對\n%s\n投下寶貴的一票~'%(vote_dict['label'])))
+        else:
+            line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='你已經投票了呀呀呀!'))
             
 @app.route('/create_meet', methods=['POST'])
 def create_meet():
@@ -191,7 +234,47 @@ def create_meet():
     conn.close()
     return "create fail"
 
+@app.route('/vote', methods=['POST'])
+def vote():
+    meet_id=request.get_json()['meet_id']
+    vote_data=request.get_json()['vote_data']
+    vote_name = vote_data['template']['title']
+    number_set=['one','two','three','four']
+    
+    conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
+    c = conn.cursor()
+    data = 'id text DEFAULT "",labels text,'
+    insert_data = ''
+    for item in list(range(0,len(vote_data['template']['actions']))):
+        data += '%s text DEFAULT 0,'%(number_set[item])
+        insert_data += '%s,'%(vote_data['template']['actions'][item]['label'])
+        data_temp = vote_data['template']['actions'][item]['data']
+        data_temp = data_temp[0:len(data_temp)-1]
+        vote_data['template']['actions'][item]['data'] = "%s,'name':'%s'}"%(data_temp,vote_name)
+        print(vote_data['template']['actions'][item]['data'])
+    data = data[0:len(data)-1]
+    c.execute('CREATE TABLE vote_%s(%s)'%(vote_name,data))
+    c.execute('INSERT INTO vote_%s (labels) VALUES ("%s")'%(vote_name,insert_data))
+    conn.commit()
+    conn.close()
+    
+    conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
+    c = conn.cursor()
+    meet_id = c.execute('SELECT id FROM user_in_where WHERE meet ="%s"'%(meet_id))
+    meet_id = meet_id.fetchall()
+    
+    for item in meet_id:
+        headers = {'Content-Type':'application/json','Authorization':'Bearer %s'%(line_token)}
+        payload = {
+            'to':item[0],
+            'messages':[vote_data]
+            }
+        res=requests.post('https://api.line.me/v2/bot/message/push',headers=headers,json=payload)
+    
+    conn.commit()  
+    conn.close()
 
+    return 'ok'
 if __name__ == "__main__":
     app.run()
 

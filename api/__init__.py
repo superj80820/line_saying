@@ -1,6 +1,7 @@
 
 # coding: utf-8
 #圖片新增的排序是否為最新 須測試(應該是正常)
+#vote選項請勿使用 , 不然可能會錯誤
 
 import string
 import re
@@ -158,7 +159,6 @@ def handle_content_message(event):
 def handle_postback(event):
     vote_dict = ast.literal_eval(event.postback.data)
     meet_id=USER_GET_MEET_ID(event.source.user_id)
-    print(vote_dict)
 
     if vote_dict['type'] == 'vote': 
         conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
@@ -208,8 +208,9 @@ def create_meet():
     def meet_data(web_id):
         conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,web_id))
         c = conn.cursor()
-        data = 'id text,say text,timestamp text,image text'
+        data = 'id TEXT,say TEXT,timestamp TEXT,image TEXT'
         c.execute('CREATE TABLE user_say(%s)'%(data))
+        c.execute('CREATE TABLE vote_sort(sort INTEGER PRIMARY KEY AUTOINCREMENT,vote_id TEXT NOT NULL)')
         conn.commit()
         conn.close()
     web_id=request.get_json()['web_id']
@@ -235,7 +236,7 @@ def create_meet():
     return "create fail"
 
 @app.route('/vote', methods=['POST'])
-def vote():
+def post_vote():
     meet_id=request.get_json()['meet_id']
     vote_data=request.get_json()['vote_data']
     vote_name = vote_data['template']['title']
@@ -243,18 +244,18 @@ def vote():
     
     conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
     c = conn.cursor()
-    data = 'id text DEFAULT "",labels text,'
+    data = 'id TEXT DEFAULT "",labels TEXT,'
     insert_data = ''
     for item in list(range(0,len(vote_data['template']['actions']))):
-        data += '%s text DEFAULT 0,'%(number_set[item])
+        data += '%s TEXT DEFAULT 0,'%(number_set[item])
         insert_data += '%s,'%(vote_data['template']['actions'][item]['label'])
         data_temp = vote_data['template']['actions'][item]['data']
         data_temp = data_temp[0:len(data_temp)-1]
         vote_data['template']['actions'][item]['data'] = "%s,'name':'%s'}"%(data_temp,vote_name)
-        print(vote_data['template']['actions'][item]['data'])
     data = data[0:len(data)-1]
     c.execute('CREATE TABLE vote_%s(%s)'%(vote_name,data))
     c.execute('INSERT INTO vote_%s (labels) VALUES ("%s")'%(vote_name,insert_data))
+    c.execute('INSERT INTO vote_sort (vote_id) VALUES ("%s")'%(vote_name))
     conn.commit()
     conn.close()
     
@@ -275,6 +276,38 @@ def vote():
     conn.close()
 
     return 'ok'
+
+@app.route('/vote', methods=['GET'])
+def get_vote():
+    def get_vote_name_list(meet_id):
+        conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
+        c = conn.cursor()
+        vote_name_list = c.execute('SELECT vote_id FROM vote_sort')
+        vote_name_list = vote_name_list.fetchall()
+        return vote_name_list
+
+    meet_id=request.args.get('meet_id')
+    number_set=['one','two','three','four']
+    vote_name_list=get_vote_name_list(meet_id)
+    vote_list=[]
+    
+    for item in list(range(0,len(vote_name_list))):
+        vote_name = vote_name_list[item][0]
+        
+        conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
+        c = conn.cursor()
+        vote_labels = c.execute('SELECT labels FROM vote_%s'%(vote_name))
+        vote_labels = vote_labels.fetchall()[0][0].split(',')
+        vote_labels.pop()
+        vote_list += [{'vote_name':'%s'%(vote_name),'vote_item':[]}]
+        for item2 in list(range(0,len(vote_labels))):
+            vote_count = c.execute('SELECT %s FROM vote_%s'%(number_set[item2],vote_name))
+            vote_count = vote_count.fetchall()[0][0]
+            vote_list[item]['vote_item']+=[{'label':vote_labels[item2],'vote_count':vote_count}]    
+        conn.commit()
+        conn.close()
+
+    return jsonify(vote_list)
 if __name__ == "__main__":
     app.run()
 

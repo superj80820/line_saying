@@ -4,10 +4,12 @@
 #vote選項請勿使用 , 不然可能會錯誤
 
 import string
+import json
 import re
 import random
 import ast
 import requests
+import pandas
 import sqlite3 as sqlite
 from flask import Flask, request, abort, jsonify
 
@@ -205,15 +207,26 @@ def handle_postback(event):
             
 @app.route('/create_meet', methods=['POST'])
 def create_meet():
-    def meet_data(web_id):
+    def meet_data(invite_id,web_id,slide_key,meet_name):
         conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,web_id))
         c = conn.cursor()
         data = 'id TEXT,say TEXT,timestamp TEXT,image TEXT'
+        c.execute('CREATE TABLE info(meet_name TEXT,invite_id TEXT,web_id TEXT,slide_key TEXT)')
         c.execute('CREATE TABLE user_say(%s)'%(data))
         c.execute('CREATE TABLE vote_sort(sort INTEGER PRIMARY KEY AUTOINCREMENT,vote_id TEXT NOT NULL)')
+        c.execute('INSERT INTO info (meet_name,invite_id,web_id,slide_key) VALUES ("%s","%s","%s","%s")'%(meet_name,invite_id,web_id,slide_key))
         conn.commit()
         conn.close()
+    meet_name=request.get_json()['meet_name']
     web_id=request.get_json()['web_id']
+    slide_link=request.get_json()['slide_link']
+
+    res = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json'%(slide_link))
+    res = json.loads(res.text)
+    slide_key = res['html']
+    slide_key = re.search('key/\w{14}',slide_key).group(0)
+    slide_key = slide_key[4:len(slide_key)]
+
     conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
     c = conn.cursor()
     try:
@@ -221,19 +234,41 @@ def create_meet():
         if ans != []:
             sent_id=list(ans)[0][2]
             c.execute('UPDATE meet_check SET web_pass ="pass" WHERE api_request ="%s"'%(web_id))
-            inite_id = c.execute('SELECT invite_id FROM meet_check WHERE api_request ="%s"'%(web_id))
-            inite_id = inite_id.fetchall()[0][0]
-            meet_data(web_id)
+            invite_id = c.execute('SELECT invite_id FROM meet_check WHERE api_request ="%s"'%(web_id))
+            invite_id = invite_id.fetchall()[0][0]
+            meet_data(invite_id,web_id,slide_key,meet_name)
             line_bot_api.push_message(sent_id, TextSendMessage(text='已驗證成功~'))
             conn.commit()
             conn.close()
-            res={'invite_id':inite_id}
-            return jsonify(res)
+
+            ret={'invite_id':invite_id,"web_id":web_id,"slide_key":slide_key,"meet_name":meet_name}
+            return jsonify(ret)
     except:
         None
     conn.commit()
     conn.close()
     return "create fail"
+
+@app.route('/meet_info', methods=['GET'])
+def meet_info():
+    def get_info(meet_id,what):
+        conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
+        c = conn.cursor()
+        info = c.execute('SELECT %s FROM info'%(what))
+        info = info.fetchall()[0][0]
+        conn.commit()
+        conn.close()
+        return info
+
+    meet_id=request.args.get('meet_id')
+    ret={}
+    ret['meet_name'] = get_info(meet_id,'meet_name') 
+    ret['invite_id'] = get_info(meet_id,'invite_id') 
+    ret['web_id'] = get_info(meet_id,'web_id') 
+    ret['slide_key'] = get_info(meet_id,'slide_key') 
+
+    return jsonify(ret)
+    
 
 @app.route('/vote', methods=['POST'])
 def post_vote():
@@ -261,10 +296,10 @@ def post_vote():
     
     conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
     c = conn.cursor()
-    meet_id = c.execute('SELECT id FROM user_in_where WHERE meet ="%s"'%(meet_id))
-    meet_id = meet_id.fetchall()
+    user_id = c.execute('SELECT id FROM user_in_where WHERE meet ="%s"'%(meet_id))
+    user_id = user_id.fetchall()
     
-    for item in meet_id:
+    for item in user_id:
         headers = {'Content-Type':'application/json','Authorization':'Bearer %s'%(line_token)}
         payload = {
             'to':item[0],
@@ -277,6 +312,41 @@ def post_vote():
 
     return 'ok'
 
+@app.route('/say', methods=['POST'])
+def say():
+    say=request.get_json()['say']
+    meet_id=request.get_json()['meet_id']
+    
+    conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
+    c = conn.cursor()
+    user_id = c.execute('SELECT id FROM user_in_where WHERE meet ="%s"'%(meet_id))
+    user_id = user_id.fetchall()
+    
+    for item in user_id:
+        headers = {'Content-Type':'application/json','Authorization':'Bearer %s'%(line_token)}
+        payload = {
+            'to':item[0],
+            'messages':[{"type":"text","text":"%s"%(say)}]
+            }
+        res=requests.post('https://api.line.me/v2/bot/message/push',headers=headers,json=payload)
+    
+    conn.commit()  
+    conn.close()
+ 
+    return 'ok'
+
+@app.route('/user_say', methods=['GET'])
+def user_say():
+    meet_id=request.args.get('meet_id')
+    
+    conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
+    df = pandas.read_sql_query("SELECT * FROM user_say", conn)
+    print(df.to_dict(orient='records'))
+    conn.commit()  
+    conn.close()
+ 
+    return jsonify(df.to_dict(orient='records'))
+
 @app.route('/vote', methods=['GET'])
 def get_vote():
     def get_vote_name_list(meet_id):
@@ -284,6 +354,8 @@ def get_vote():
         c = conn.cursor()
         vote_name_list = c.execute('SELECT vote_id FROM vote_sort')
         vote_name_list = vote_name_list.fetchall()
+        conn.commit()
+        conn.close()
         return vote_name_list
 
     meet_id=request.args.get('meet_id')
@@ -308,6 +380,18 @@ def get_vote():
         conn.close()
 
     return jsonify(vote_list)
+
+@app.route('/test', methods=['POST'])
+def test():
+    slide_link=request.get_json()['slide_link']
+    res = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json'%(slide_link))
+    res = json.loads(res.text)
+    slide_key = res['html']
+    slide_key = re.search('key/\w{14}',slide_key).group(0)
+    slide_key = slide_key[4:len(slide_key)]
+
+    return 'ok'
+
 if __name__ == "__main__":
     app.run()
 

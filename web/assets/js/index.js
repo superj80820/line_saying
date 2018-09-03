@@ -18,7 +18,7 @@ function sent_id() {
 	console.log(sent_id);
 	console.log(slide_link);
 
-	window.location.href="https://messfar.com/line_saying/home.html";
+	window.location.href="home.html";
 }
 
 function getid(){

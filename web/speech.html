@@ -65,11 +65,13 @@
 			<section class="wrapper style1">
 				<div class="inner">
 					<h2>發送圖片</h2>
-					<form action="" method="POST">
+					<form id="image_data" method="post">
 						<h4>請上傳要發送至 Line Bot 的圖片 :</h4>
 						<div class="6u 12u$(xsmall)">
-							<input name="youfile" type="File">
-							<input id=send2 type="button" value="送出" /><font color=red><span id=box></span></font>
+							<input id=sent_image name="image" type="File">
+							<!-- <input type="text" name="meet_id" value="66804" /> -->
+							<!-- <input id=send2 type="button" value="送出" /><font color=red><span id=box></span></font> -->
+							<button>Submit</button><font color=red><span id=box2></span></font>
 						</div>
 					</form>
 				</div>
@@ -80,6 +82,7 @@
 			<script src="assets/js/skel.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
-			<script src="assets/js/test2.js"></script>
+			<!-- <script src="assets/js/test2.js"></script> -->
+			<script src="assets/js/speech.js"></script>
 	</body>
 </html>

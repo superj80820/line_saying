@@ -16,7 +16,7 @@
 		<!-- Nav -->
 			<nav id="menu">
 				<ul class="links">
-					<img src="images/murano.png" width="230" alt="">
+					<img src="images/line hack.png" width="230" alt="">
 					<li><a href="home.html">首頁</a></li>
 					<li><a href="speech.html">講師頁</a></li>
 					<li><a href="audience.html">觀眾頁</a></li>
@@ -37,25 +37,24 @@
 			<section class="wrapper style3">
 				<div id="two" class="inner">
 					<header class="align-center">
-						<h2>標題我不知道要打什麼</h2>
-						<p>此演講者平台中所有開發人員的負責內容</p>
+						<h2>白板與簡報區</h2>
+						<p>可將文件上傳至此並可以運用白板進行更有效的講解</p>
 					</header>
-					<div class="flex flex-2">
-						<iframe width="380px" height="700px" src="https://awwapp.com/b/uzq1ztx9o/"></iframe>
-						<iframe width="1140px" height="700px" src="//www.slideshare.net/slideshow/embed_code/key/CxwGbWQO0mDtUE" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;"> </iframe>
+					<div class="flex flex-12">
+						<iframe width="35%" height="700px" src="https://awwapp.com/b/uzq1ztx9o/"></iframe>
+						<iframe width="65%" height="700px" src="https://www.slideshare.net/slideshow/embed_code/key/CxwGbWQO0mDtUE" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
 					</div>
-					<div class="align-center"><a href="#three" class="button big alt scrolly">繼續</a></div>
 				</div>
 			</section>
 		<!-- Three -->
 			<section id="three" class="wrapper style1">
 				<div class="inner">
 					<h2>發送訊息</h2>
-					<form action="" method="">
+					<form action="" method="POST">
 						<h4>請輸入要發送至 Line Bot 的訊息 :</h4>
 						<div class="6u 12u$(xsmall)">
 							<input type="text" name="name" id="message" value="" placeholder="Message" />
-							<input id=send type="button" value="送出" /><font color=red><span id=box></span></font>
+							<input id=send1 type="button" value="送出" /><font color=red><span id=box></span></font>
 						</div>
 					</form>
 				</div>
@@ -65,13 +64,12 @@
 		<!-- Four -->
 			<section class="wrapper style1">
 				<div class="inner">
-					<h2>紀錄網址</h2>
-					<ul class=link_list></ul>
-					<form action="" method="">
-						<h4>請貼上或輸入要紀錄至此的網站網址 :</h4>
+					<h2>發送圖片</h2>
+					<form action="" method="POST">
+						<h4>請上傳要發送至 Line Bot 的圖片 :</h4>
 						<div class="6u 12u$(xsmall)">
-							<input type="text" name="name" id="na" value="" placeholder="Link" />
-							<input id=add type="button" value="送出" />
+							<input name="youfile" type="File">
+							<input id=send2 type="button" value="送出" /><font color=red><span id=box></span></font>
 						</div>
 					</form>
 				</div>

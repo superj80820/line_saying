@@ -109,16 +109,17 @@
 			<script src="assets/js/skel.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+			<script src="assets/js/jquery.cookie.js"></script>
 			<script type="text/javascript">
                       $(document).ready(function(){
-                        var result = "";
-                        var refDoc = $(window.opener.document);
-                        var value = $("#SentId", refDoc).val();
-                        result = value;
-                        //$("#WebId").val(result);
-			//document.getElementById("WebId2").value = result;
-			$(WebId2).text(result)
-        	        });
+							var meet_name=$.cookie("MeetName");
+							var sent_id=$.cookie("SentId");
+							var slide_link=$.cookie("SlideLink");
+							console.log(meet_name);
+							console.log(sent_id);
+							console.log(slide_link);
+							$(WebId).text(sent_id);
+						});
 	                </script>
 	</body>
 </html>

@@ -12,12 +12,12 @@
 			<br /><br /><br /><br /><br /><br /><br /><br />
 			<div id=verify class="align-center">	
 				<h3>請輸入演講名稱</h3>
-				<center><input type=text id=SentId name=SentId style="height:40px;width:400px"></center><br />
+				<center><input type=text id=MeetName name=MeetName style="height:40px;width:400px"></center><br />
 				<h3>請輸入驗證碼</h3>
 				<center><input type=text id=SentId name=SentId style="height:40px;width:400px"></center><br />
 				<h3>請輸入簡報網頁</h3>
-				<center><input type=text id=SentId name=SentId style="height:40px;width:400px"></center><br />
-				<input type=button id=sent onclick='sentid()' value=送出>
+				<center><input type=text id=SlideLink name=SlideLink style="height:40px;width:400px"></center><br />
+				<input type=button id=sent onclick='sent_id()' value=送出>
 			</div>
 		<!-- Scripts -->
 			<script src="assets/js/jquery.min.js"></script>
@@ -26,5 +26,6 @@
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
 			<script src="assets/js/index.js"></script>
+			<script src="assets/js/jquery.cookie.js"></script>
 	</body>
 </html>

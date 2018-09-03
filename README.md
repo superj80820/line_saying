@@ -1,125 +1,879 @@
- 
+line-bot-sdk-python
+===================
 
-OVERVIEW
-DEFINITION:  hack-a-thon : also called "hack day", "hackfest" and "codefest" is a design sprint event where people of all professions (programmers, project managers, designers, writers, etc) collaborate on project ideation and creation. It's not necessary that everyone feel comfortable working directly with swagger files to make the integrations. Each Exchange card needs a title, description of what it is and how it works, links, pictures, etc. Other things that could be created are contributions to the docs site, draft blog posts, etc. So it really can be something that everyone in the company contributes to. Additionally each team will be required to prepare a 10-15 min presentation to be demo'd at the end of Day 2. 
+|Build Status| |PyPI version| |Documentation Status|
 
-THEME
-THEME: The 2018 Exosite Hackathon will be rallied around the idea of building an "ecosystem" around our product family by focusing on building new integrations in Exchange or by adding or improving any other capabilities that can help us expand the ecosystem around our product portfolio. 
+SDK of the LINE Messaging API for Python.
 
-This year’s hackathon will leverage Exosite’s latest version of Exchange which allows the ability to publish third party services like Slack, Salesforce and Auth0!
+About the LINE Messaging API
+----------------------------
 
-Goal is to actually have teams create integrations that are fully published on Exchange as a third party service – not just dev/staging. Examples would be existing integrations that you can find on Exchange like Slack, Auth0 or Dark Sky.  
+See the official API documentation for more information.
 
-Here are some example projects to get you thinking:
+English: https://developers.line.me/en/docs/messaging-api/reference/
 
-Create a solution that uses an existing service on Exchange to do an interesting thing.
-Create a new integration and publish on Exchange and show a simple example solution (application or product) that uses it.
-Create documentation for the Exchange card, how-to-guide, or draft a blog post for existing or new Exchange elements
-Make a contribution to ExoEdge, ExoSense, ExoHome, ExoFleet, or Exosite Insights that makes it easier for ecosystem partners (system integrators, value-added resellers, etc.) to engage or add value
-Create a story/presentation/documentation around a possible integration or feature set that would drive ecosystem value for Exosite. If you don't create a functional integration or feature set that works, then make sure to include good info about how we would go to market, engage our partners, and how it would add value for Exosite
-Help:
-APIs for Service: Click here for Ideas for API Swaggers
-Swagger Definitions - https://github.com/APIs-guru/openapi-directory/tree/master/APIs
-Exchange Design Template: https://docs.google.com/document/d/1PyjhKxYHEpJPjYzkXaR7mdkFuELIVjBV0jMkOS3HAM4/edit
-Murano Service Creation - Known Issues - https://docs.google.com/document/d/1tSqK9ILTeEirKaIe1EfdFhqJz1Oe-que7OCBgeVvnW8/edit
-Offline Swagger validator: https://github.com/exosite/3rd_party_services/blob/master/validate
-AGENDA
-Click here for US Details
+Japanese: https://developers.line.me/ja/docs/messaging-api/reference/
 
-Click here for TW Details
+Install
+-------
 
+::
 
+    $ pip install line-bot-sdk
 
-HACK DAYS
+Synopsis
+--------
 
-DAY ONE: Monday, August 13th, 12:00-5:00pm*
+Usage:
 
-*Please note: You and your team are more than welcome to stay past 5:00pm and hack into the evening. 
+.. code:: python
 
-DAY TWO: Tuesday, August 14th, 9:00am - 5:00pm
+    from flask import Flask, request, abort
 
-PRESENTATION & VOTING
+    from linebot import (
+        LineBotApi, WebhookHandler
+    )
+    from linebot.exceptions import (
+        InvalidSignatureError
+    )
+    from linebot.models import (
+        MessageEvent, TextMessage, TextSendMessage,
+    )
 
-WEDNESDAY August 15, 2-4pm
+    app = Flask(__name__)
 
-What: Each team will present and demo their project in front of the rest of the office. Presentations should be around 5 minutes long. 
-Who: Everyone
-Details: The order for which teams present will be random. 
-Judges: (TBD) will be our panel of judges and then will announce the winner during the Feature Friday presentation
-A video recording of the presentations will be listed online and a link to the video will be sent out to the rest of the company to view.
-RULES
-Everyone is encouraged to participate! Please discuss with your manager if you feel you cannot for some reason. 
-Project teams should be as cross-department as possible! Team sizes can range from 3-7 people. 
-Demo/presentation of what was created needs to be ready to go by the end of day 2. 
-Participants are not allowed to develop their projects outside of the predetermined "hacking" hours.
-Log your hackathon time under INT-22
-Teams registered will receive an invitation to Exosite Hackathon business, all Exchange Elements created during the hackathon should be published using this business and the element should be private (default).
+    line_bot_api = LineBotApi('YOUR_CHANNEL_ACCESS_TOKEN')
+    handler = WebhookHandler('YOUR_CHANNEL_SECRET')
 
 
+    @app.route("/callback", methods=['POST'])
+    def callback():
+        # get X-Line-Signature header value
+        signature = request.headers['X-Line-Signature']
 
-SUBMISSIONS
+        # get request body as text
+        body = request.get_data(as_text=True)
+        app.logger.info("Request body: " + body)
 
-Please USE THIS TEMPLATE to create a wiki page for your team and include a link below. Also add your team to the table below as soon as it has been formed. 
+        # handle webhook body
+        try:
+            handler.handle(body, signature)
+        except InvalidSignatureError:
+            abort(400)
 
-TEAMS
-Enter your team members, team name, link to your team's wiki page and office location into the table below. If you do not have a team, do not worry! We will assign you to a team already formed. Teams will expect that they could have 1-2 people added to their team prior to Friday's team meeting. 
-
-US employees will form teams and vote for US teams only and Taiwan teams will form and vote for their own teams. 
-Everyone must join a team within their region.
-Try your best to diversify your team and work with people you don't already work with regularly!
-
-
-
-US Team Members
-
-Team Name
-
-Project Page Link
-
-Location
-Charlie, Solz, Alonna, Maggie, Gavin, Stacey, Carlene	No Sheet, Sherlock	No Sheet, Sherlock!	Mpls
-Abby, Josh S, Kris, Landon, Phil V, Steve VS, Mike A	Charlie Eight Hotel One Zero November Four Oscar Two	Charlie Eight Hotel One Zero November Four Oscar Two	
-Mpls
-
-Eli, Heather, Kim, Pat L, Tim, Will, Steve W	Team Truffula	Team Truffula	Mpls
-Chris H, Jay, Pat S, Thane, Mark B, Arthur, Kevin	The Stragglers	Presentation	Mpls
+        return 'OK'
 
 
-Write your name down here if you're looking for a team!
-  RyanK - will be in Taichung & looking for a team!
+    @handler.add(MessageEvent, message=TextMessage)
+    def handle_message(event):
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=event.message.text))
 
 
-Judging Criteria/Judges/Prizes
-JUDGING CRITERIA: 
+    if __name__ == "__main__":
+        app.run()
 
-Value Proposition (How does your project add value to Exosite)
+API
+---
 
-Team Effort (Everyone's involvement, team building)
+LineBotApi
+~~~~~~~~~~
 
-Demonstration (Did it work?)
+\_\_init\_\_(self, channel\_access\_token, endpoint='https://api.line.me', timeout=5, http\_client=RequestsHttpClient)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Creativity (Uniqueness, does it look cool, etc.)
+Create a new LineBotApi instance.
 
-JUDGING PANEL: 
+.. code:: python
 
-David, Lizabeth, and Hans will be the three panel of judges for the US during the August 14 presentations.
+    line_bot_api = linebot.LineBotApi('YOUR_CHANNEL_ACCESS_TOKEN')
 
-Taiwan will use voting to decide the final winners!
+You can override the ``timeout`` value for each method.
 
-PRIZES:
+reply\_message(self, reply\_token, messages, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Winning team members from the US will receive a gift card!
+Respond to events from users, groups, and rooms. You can get a
+reply\_token from a webhook event object.
 
-Winning team members from Taiwan prize will be updated afterwards.
+https://developers.line.me/en/docs/messaging-api/reference/#send-reply-message
 
-PRESENTATIONS / AWARD CEREMONY
-PRESENTATIONS:
+.. code:: python
 
-All teams should plan to present Wed August 15 from 14:00-16:00
-No more than 15 minutes for your presentation
-Teams do not have to create a project video prior to presentations but may if they would prefer to. 
-Each team will be video taped during their presentation – this is so that we can share each other's ideas cross regionally. 
-Order for team presentations will be randomly assigned.
- 
+    line_bot_api.reply_message(reply_token, TextSendMessage(text='Hello World!'))
 
- 
+push\_message(self, to, messages, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Send messages to users, groups, and rooms at any time.
+
+https://developers.line.me/en/docs/messaging-api/reference/#send-push-message
+
+.. code:: python
+
+    line_bot_api.push_message(to, TextSendMessage(text='Hello World!'))
+
+multicast(self, to, messages, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Send messages to multiple users at any time.
+
+https://developers.line.me/en/docs/messaging-api/reference/#send-multicast-messages
+
+.. code:: python
+
+    line_bot_api.multicast(['to1', 'to2'], TextSendMessage(text='Hello World!'))
+
+get\_profile(self, user\_id, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Get user profile information.
+
+https://developers.line.me/en/docs/messaging-api/reference/#get-profile
+
+.. code:: python
+
+    profile = line_bot_api.get_profile(user_id)
+
+    print(profile.display_name)
+    print(profile.user_id)
+    print(profile.picture_url)
+    print(profile.status_message)
+
+get\_group\_member\_profile(self, group\_id, user\_id, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Gets the user profile of a member of a group that the bot is in. This can be
+the user ID of a user who has not added the bot as a friend or has blocked
+the bot.
+
+https://developers.line.me/en/docs/messaging-api/reference/#get-group-member-profile
+
+.. code:: python
+
+    profile = line_bot_api.get_group_member_profile(group_id, user_id)
+
+    print(profile.display_name)
+    print(profile.user_id)
+    print(profile.picture_url)
+
+get\_room\_member\_profile(self, room\_id, user\_id, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Gets the user profile of a member of a room that the bot is in. This can be the
+user ID of a user who has not added the bot as a friend or has blocked the bot.
+
+https://developers.line.me/en/docs/messaging-api/reference/#get-room-member-profile
+
+.. code:: python
+
+    profile = line_bot_api.get_room_member_profile(room_id, user_id)
+
+    print(profile.display_name)
+    print(profile.user_id)
+    print(profile.picture_url)
+
+get\_group\_member\_ids(self, group\_id, start=None, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Gets the user IDs of the members of a group that the bot is in.
+This includes the user IDs of users who have not added the bot as a friend or has blocked the bot.
+
+https://developers.line.me/en/docs/messaging-api/reference/#get-group-member-user-ids
+
+.. code:: python
+
+    member_ids_res = line_bot_api.get_group_member_ids(group_id)
+
+    print(member_ids_res.member_ids)
+    print(member_ids_res.next)
+
+get\_room\_member\_ids(self, room\_id, start=None, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Gets the user IDs of the members of a room that the bot is in.
+This includes the user IDs of users who have not added the bot as a friend or has blocked the bot.
+
+https://developers.line.me/en/docs/messaging-api/reference/#get-room-member-user-ids
+
+.. code:: python
+
+    member_ids_res = line_bot_api.get_room_member_ids(room_id)
+
+    print(member_ids_res.member_ids)
+    print(member_ids_res.next)
+
+get\_message\_content(self, message\_id, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Retrieve image, video, and audio data sent by users.
+
+https://developers.line.me/en/docs/messaging-api/reference/#get-content
+
+.. code:: python
+
+    message_content = line_bot_api.get_message_content(message_id)
+
+    with open(file_path, 'wb') as fd:
+        for chunk in message_content.iter_content():
+            fd.write(chunk)
+
+leave\_group(self, group\_id, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Leave a group.
+
+https://developers.line.me/en/docs/messaging-api/reference/#leave-group
+
+.. code:: python
+
+    line_bot_api.leave_group(group_id)
+
+leave\_room(self, room\_id, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Leave a room.
+
+https://developers.line.me/en/docs/messaging-api/reference/#leave-room
+
+.. code:: python
+
+    line_bot_api.leave_room(room_id)
+
+get\_rich\_menu(self, rich\_menu\_id, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Gets a rich menu via a rich menu ID.
+
+https://developers.line.me/en/docs/messaging-api/reference/#get-rich-menu
+
+.. code:: python
+
+    rich_menu = line_bot_api.get_rich_menu(rich_menu_id)
+    print(rich_menu.rich_menu_id)
+
+create\_rich\_menu(self, rich\_menu, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Creates a rich menu.
+You must upload a rich menu image and link the rich menu to a user for the rich menu to be displayed. You can create up to 10 rich menus for one bot.
+
+https://developers.line.me/en/docs/messaging-api/reference/#create-rich-menu
+
+.. code:: python
+
+    rich_menu_to_create = RichMenu(
+        size=RichMenuSize(width=2500, height=843),
+        selected=False,
+        name="Nice richmenu",
+        chat_bar_text="Tap here",
+        areas=[RichMenuArea(
+            bounds=RichMenuBounds(x=0, y=0, width=2500, height=843),
+            action=URIAction(label='Go to line.me', uri='https://line.me'))]
+    )
+    rich_menu_id = line_bot_api.create_rich_menu(rich_menu=rich_menu_to_create)
+    print(rich_menu_id)
+
+delete\_rich\_menu(self, rich\_menu\_id, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Deletes a rich menu.
+
+https://developers.line.me/en/docs/messaging-api/reference/#delete-rich-menu
+        
+.. code:: python
+
+    line_bot_api.delete_rich_menu(rich_menu_id)
+
+get\_rich\_menu\_id\_of\_user(self, user\_id, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Gets the ID of the rich menu linked to a user.
+
+https://developers.line.me/en/docs/messaging-api/reference/#get-rich-menu-id-of-user
+
+.. code:: python
+
+    rich_menu_id = ine_bot_api.get_rich_menu_id_of_user(user_id)
+    print(rich_menu_id)
+
+link\_rich\_menu\_to\_user(self, user\_id, rich\_menu\_id, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Links a rich menu to a user. Only one rich menu can be linked to a user at one time.
+
+https://developers.line.me/en/docs/messaging-api/reference/#link-rich-menu-to-user
+
+.. code:: python
+
+    line_bot_api.link_rich_menu_to_user(user_id, rich_menu_id)
+
+unlink\_rich\_menu\_from\_user(self, user\_id, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Unlinks a rich menu from a user.
+
+https://developers.line.me/en/docs/messaging-api/reference/#unlink-rich-menu-from-user
+
+.. code:: python
+
+    line_bot_api.unlink_rich_menu_from_user(user_id)
+
+get\_rich\_menu\_image(self, rich\_menu\_id, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Downloads an image associated with a rich menu.
+
+https://developers.line.me/en/docs/messaging-api/reference/#download-rich-menu-image
+
+.. code:: python
+
+    content = line_bot_api.get_rich_menu_image(rich_menu_id)
+    with open(file_path, 'wb') as fd:
+        for chunk in content.iter_content():
+            fd.write(chunk)
+
+set\_rich\_menu\_image(self, rich\_menu\_id, content\_type, content, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Uploads and attaches an image to a rich menu.
+
+https://developers.line.me/en/docs/messaging-api/reference/#upload-rich-menu-image
+
+.. code:: python
+
+    with open(file_path, 'rb') as f:
+        line_bot_api.set_rich_menu_image(rich_menu_id, content_type, f)
+
+get\_rich\_menu\_list(self, timeout=None)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Gets a list of all uploaded rich menus.
+
+https://developers.line.me/en/docs/messaging-api/reference/#get-rich-menu-list
+
+.. code:: python
+
+    rich_menu_list = line_bot_api.get_rich_menu_list()
+    for rich_menu in rich_menu_list:
+        print(rich_menu.rich_menu_id)
+
+※ Error handling
+^^^^^^^^^^^^^^^^
+
+If the LINE API server returns an error, LineBotApi raises LineBotApiError.
+
+https://developers.line.me/en/docs/messaging-api/reference/#error-responses
+
+.. code:: python
+
+    try:
+        line_bot_api.push_message('to', TextSendMessage(text='Hello World!'))
+    except linebot.exceptions.LineBotApiError as e:
+        print(e.status_code)
+        print(e.error.message)
+        print(e.error.details)
+
+Message objects
+~~~~~~~~~~~~~~~
+
+https://developers.line.me/en/docs/messaging-api/reference/#message-objects
+
+The following classes are found in the ``linebot.models`` package.
+
+TextSendMessage
+^^^^^^^^^^^^^^^
+
+.. code:: python
+
+    text_message = TextSendMessage(text='Hello, world')
+
+ImageSendMessage
+^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+    image_message = ImageSendMessage(
+        original_content_url='https://example.com/original.jpg',
+        preview_image_url='https://example.com/preview.jpg'
+    )
+
+VideoSendMessage
+^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+    video_message = VideoSendMessage(
+        original_content_url='https://example.com/original.mp4',
+        preview_image_url='https://example.com/preview.jpg'
+    )
+
+AudioSendMessage
+^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+    audio_message = AudioSendMessage(
+        original_content_url='https://example.com/original.m4a',
+        duration=240000
+    )
+
+LocationSendMessage
+^^^^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+    location_message = LocationSendMessage(
+        title='my location',
+        address='Tokyo',
+        latitude=35.65910807942215,
+        longitude=139.70372892916203
+    )
+
+StickerSendMessage
+^^^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+    sticker_message = StickerSendMessage(
+        package_id='1',
+        sticker_id='1'
+    )
+
+ImagemapSendMessage
+^^^^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+    imagemap_message = ImagemapSendMessage(
+        base_url='https://example.com/base',
+        alt_text='this is an imagemap',
+        base_size=BaseSize(height=1040, width=1040),
+        actions=[
+            URIImagemapAction(
+                link_uri='https://example.com/',
+                area=ImagemapArea(
+                    x=0, y=0, width=520, height=1040
+                )
+            ),
+            MessageImagemapAction(
+                text='hello',
+                area=ImagemapArea(
+                    x=520, y=0, width=520, height=1040
+                )
+            )
+        ]
+    )
+
+TemplateSendMessage - ButtonsTemplate
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+    buttons_template_message = TemplateSendMessage(
+        alt_text='Buttons template',
+        template=ButtonsTemplate(
+            thumbnail_image_url='https://example.com/image.jpg',
+            title='Menu',
+            text='Please select',
+            actions=[
+                PostbackAction(
+                    label='postback',
+                    text='postback text',
+                    data='action=buy&itemid=1'
+                ),
+                MessageAction(
+                    label='message',
+                    text='message text'
+                ),
+                URIAction(
+                    label='uri',
+                    uri='http://example.com/'
+                )
+            ]
+        )
+    )
+
+TemplateSendMessage - ConfirmTemplate
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+    confirm_template_message = TemplateSendMessage(
+        alt_text='Confirm template',
+        template=ConfirmTemplate(
+            text='Are you sure?',
+            actions=[
+                PostbackAction(
+                    label='postback',
+                    text='postback text',
+                    data='action=buy&itemid=1'
+                ),
+                MessageAction(
+                    label='message',
+                    text='message text'
+                )
+            ]
+        )
+    )
+
+TemplateSendMessage - CarouselTemplate
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+    carousel_template_message = TemplateSendMessage(
+        alt_text='Carousel template',
+        template=CarouselTemplate(
+            columns=[
+                CarouselColumn(
+                    thumbnail_image_url='https://example.com/item1.jpg',
+                    title='this is menu1',
+                    text='description1',
+                    actions=[
+                        PostbackAction(
+                            label='postback1',
+                            text='postback text1',
+                            data='action=buy&itemid=1'
+                        ),
+                        MessageAction(
+                            label='message1',
+                            text='message text1'
+                        ),
+                        URIAction(
+                            label='uri1',
+                            uri='http://example.com/1'
+                        )
+                    ]
+                ),
+                CarouselColumn(
+                    thumbnail_image_url='https://example.com/item2.jpg',
+                    title='this is menu2',
+                    text='description2',
+                    actions=[
+                        PostbackAction(
+                            label='postback2',
+                            text='postback text2',
+                            data='action=buy&itemid=2'
+                        ),
+                        MessageAction(
+                            label='message2',
+                            text='message text2'
+                        ),
+                        URIAction(
+                            label='uri2',
+                            uri='http://example.com/2'
+                        )
+                    ]
+                )
+            ]
+        )
+    )
+
+TemplateSendMessage - ImageCarouselTemplate
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+    image_carousel_template_message = TemplateSendMessage(
+        alt_text='ImageCarousel template',
+        template=ImageCarouselTemplate(
+            columns=[
+                ImageCarouselColumn(
+                    image_url='https://example.com/item1.jpg',
+                    action=PostbackAction(
+                        label='postback1',
+                        text='postback text1',
+                        data='action=buy&itemid=1'
+                    )
+                ),
+                ImageCarouselColumn(
+                    image_url='https://example.com/item2.jpg',
+                    action=PostbackAction(
+                        label='postback2',
+                        text='postback text2',
+                        data='action=buy&itemid=2'
+                    )
+                )
+            ]
+        )
+    )
+
+With QuickReply
+^^^^^^^^^^^^^^^
+
+.. code:: python
+
+    text_message = TextSendMessage(text='Hello, world',
+                                   quick_reply=QuickReply(items=[
+                                       QuickReplyButton(action=MessageAction(label="label", text="text"))
+                                   ]))
+
+Webhook
+-------
+
+WebhookParser
+~~~~~~~~~~~~~
+
+※ You can use WebhookParser or WebhookHandler
+
+\_\_init\_\_(self, channel\_secret)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+    parser = linebot.WebhookParser('YOUR_CHANNEL_SECRET')
+
+parse(self, body, signature)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Parses the webhook body and builds an event object list. If the signature does NOT
+match, InvalidSignatureError is raised.
+
+.. code:: python
+
+    events = parser.parse(body, signature)
+
+    for event in events:
+        # Do something
+
+WebhookHandler
+~~~~~~~~~~~~~~
+
+※ You can use WebhookParser or WebhookHandler
+
+\_\_init\_\_(self, channel\_secret)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+    handler = linebot.WebhookHandler('YOUR_CHANNEL_SECRET')
+
+handle(self, body, signature)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Handles webhooks. If the signature does NOT match,
+InvalidSignatureError is raised.
+
+.. code:: python
+
+    handler.handle(body, signature)
+
+Add handler method
+^^^^^^^^^^^^^^^^^^
+
+You can add a handler method by using the ``add`` decorator.
+
+``add(self, event, message=None)``
+
+.. code:: python
+
+    @handler.add(MessageEvent, message=TextMessage)
+    def handle_message(event):
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=event.message.text))
+
+When the event is an instance of MessageEvent and event.message is an instance of
+TextMessage, this handler method is called.
+
+Set default handler method
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can set the default handler method by using the ``default`` decorator.
+
+``default(self)``
+
+.. code:: python
+
+    @handler.default()
+    def default(event):
+        print(event)
+
+If there is no handler for an event, this default handler method is called.
+
+Webhook event object
+~~~~~~~~~~~~~~~~~~~~
+
+https://developers.line.me/en/docs/messaging-api/reference/#webhook-event-objects
+
+The following classes are found in the ``linebot.models`` package.
+
+Event
+^^^^^
+
+- MessageEvent
+    - type
+    - timestamp
+    - source: `Source <#source>`__
+    - reply\_token
+    - message: `Message <#message>`__
+- FollowEvent
+    - type
+    - timestamp
+    - source: `Source <#source>`__
+    - reply\_token
+- UnfollowEvent
+    - type
+    - timestamp
+    - source: `Source <#source>`__
+- JoinEvent
+    - type
+    - timestamp
+    - source: `Source <#source>`__
+    - reply\_token
+- LeaveEvent
+    - type
+    - timestamp
+    - source: `Source <#source>`__
+- PostbackEvent
+    - type
+    - timestamp
+    - source: `Source <#source>`__
+    - reply\_token
+    - postback: Postback
+        - data
+        - params: dict
+- BeaconEvent
+    - type
+    - timestamp
+    - source: `Source <#source>`__
+    - reply\_token
+    - beacon: Beacon
+        - type
+        - hwid
+        - device_message
+
+Source
+^^^^^^
+
+- SourceUser
+    - type
+    - user\_id
+- SourceGroup
+    - type
+    - group\_id
+    - user\_id
+- SourceRoom
+    - type
+    - room\_id
+    - user\_id
+
+Message
+^^^^^^^
+
+- TextMessage
+    - type
+    - id
+    - text
+- ImageMessage
+    - type
+    - id
+- VideoMessage
+    - type
+    - id
+- AudioMessage
+    - type
+    - id
+- LocationMessage
+    - type
+    - id
+    - title
+    - address
+    - latitude
+    - longitude
+- StickerMessage
+    - type
+    - id
+    - package\_id
+    - sticker\_id
+- FileMessage
+    - type
+    - id
+    - file\_size
+    - file\_name
+
+Hints
+-----
+
+Examples
+~~~~~~~~
+
+`simple-server-echo <https://github.com/line/line-bot-sdk-python/tree/master/examples/simple-server-echo>`__
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Sample echo-bot using
+`wsgiref.simple\_server <https://docs.python.org/3/library/wsgiref.html>`__
+
+`flask-echo <https://github.com/line/line-bot-sdk-python/tree/master/examples/flask-echo>`__
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Sample echo-bot using `Flask <http://flask.pocoo.org/>`__
+
+`flask-kitchensink <https://github.com/line/line-bot-sdk-python/tree/master/examples/flask-kitchensink>`__
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Sample bot using `Flask <http://flask.pocoo.org/>`__
+
+API documentation
+-----------------
+
+::
+
+    $ cd docs
+    $ make html
+    $ open build/html/index.html
+
+OR |Documentation Status|
+
+Requirements
+------------
+
+-  Python >= 2.7 or >= 3.4
+
+For SDK developers
+------------------
+
+First install for development.
+
+::
+
+    $ pip install -r requirements-dev.txt
+
+Run tests
+~~~~~~~~~
+
+Test by using tox. We test against the following versions.
+
+-  2.7
+-  3.4
+-  3.5
+-  3.6
+
+To run all tests and to run ``flake8`` against all versions, use:
+
+::
+
+    tox
+
+To run all tests against version 2.7, use:
+
+::
+
+    $ tox -e py27
+
+To run a test against version 2.7 and against a specific file, use:
+
+::
+
+    $ tox -e py27 -- tests/test_webhook.py
+
+And more... TBD
+
+.. |Build Status| image:: https://travis-ci.org/line/line-bot-sdk-python.svg?branch=master
+   :target: https://travis-ci.org/line/line-bot-sdk-python
+.. |PyPI version| image:: https://badge.fury.io/py/line-bot-sdk.svg
+   :target: https://badge.fury.io/py/line-bot-sdk
+.. |Documentation Status| image:: https://readthedocs.org/projects/line-bot-sdk-python/badge/?version=latest
+   :target: http://line-bot-sdk-python.readthedocs.io/en/latest/?badge=latest

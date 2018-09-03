@@ -14,6 +14,7 @@ import requests
 import pandas
 import sqlite3 as sqlite
 from flask import Flask, request, abort, jsonify
+from flask_cors import CORS
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -26,6 +27,7 @@ from linebot.models import (
 )
 
 app = Flask(__name__)
+CORS(app)
 
 line_token = 'D9I+Oxtoll926dCqHX3bnx6fhiAqKt28n/PQYmaeGjsmG3Uq+W+tspiRQaAW6AZTQKpZuvi9VAFFpL8+EBhExS1U/zjqRCoVF2lpDwFgDvf6k9bOrlgB8fEcBJCgTd9g41oQ7iTMb3o0t2qPddQskgdB04t89/1O/w1cDnyilFU='
 line_bot_api = LineBotApi(line_token)

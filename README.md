@@ -1,6 +1,5 @@
 LINE HACK-2018  line_saying
 =
-
 |Build Status| |PyPI version| |Documentation Status|
 
 SDK of the LINE Messaging API for Python.

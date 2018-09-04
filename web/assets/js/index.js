@@ -1,13 +1,12 @@
 function sent_id() {
-	// window.location.href="https://messfar.com/line_saying/home.html";
- 
-//window.open("https://messfar.com/line_saying/");
-  //  window.open('','_top'); 
-   // window.top.close(); 
-//    window.location = "https://messfar.com/line_saying/home.html" 
-  //  window.open("home.html");
-//window.close();
-  //  window.open("index.html");
+// window.location.href="https://messfar.com/line_saying/home.html";
+// window.open("https://messfar.com/line_saying/");
+//  window.open('','_top'); 
+//  window.top.close(); 
+//  window.location = "https://messfar.com/line_saying/home.html" 
+//  window.open("home.html");
+//  window.close();
+//  window.open("index.html");
 	var meet_name=document.getElementById('MeetName').value;
 	var sent_id=document.getElementById('SentId').value;
 	var slide_link=document.getElementById('SlideLink').value;
@@ -17,7 +16,6 @@ function sent_id() {
 	console.log(meet_name);
 	console.log(sent_id);
 	console.log(slide_link);
-
 	window.location.href="speech.html";
 }
 

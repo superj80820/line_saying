@@ -18,7 +18,7 @@ function sent_id() {
 	console.log(sent_id);
 	console.log(slide_link);
 
-	window.location.href="home.html";
+	window.location.href="speech.html";
 }
 
 function getid(){

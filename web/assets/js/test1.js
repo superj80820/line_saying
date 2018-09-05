@@ -5,6 +5,16 @@ $(document).ready(function() {
     var invite_id=$.cookie("InviteId");
     var slide_key=$.cookie("SlideKey");
 
+    console.log(meet_name);
+    console.log(sent_id);
+    console.log(slide_link);
+    console.log(invite_id);
+    console.log(slide_key);
+
+    $(WebId).text(invite_id);
+
+    
+
     $.ajax({
       type: 'GET',
       url: 'https://messfar.com/line_saying_api/user_say?meet_id='+sent_id,
@@ -63,6 +73,11 @@ $(document).ready(function() {
         a++;
       }
      });
+
+
+     $("button").click(function(){
+      $("p").toggle();
+    });
   });
 
   /*$.ajax({

@@ -114,29 +114,17 @@
 							var meet_name=$.cookie("MeetName");
 							var sent_id=$.cookie("SentId");
 							var slide_link=$.cookie("SlideLink");
+							var invite_id=$.cookie("InviteId");
+							var slide_key=$.cookie("SlideKey");
+
 							console.log(meet_name);
 							console.log(sent_id);
 							console.log(slide_link);
-							
-							$.ajax({
-								type: 'POST',
-								url: 'https://messfar.com/line_saying_api/create_meet',
-								contentType: "application/json; charset=utf-8",
-								dataType: 'json',
-								data: JSON.stringify({
-									"meet_name": meet_name,
-									"web_id": sent_id,
-									"slide_link": slide_link
-								}),
-								// error: function(req, err){ console.log('my message' + err); }
-								success: function(test_res) {   
-									console.log(test_res)
-									$.cookie("InviteId",test_res.invite_id);
-									console.log(test_res.invite_id);
-									$(WebId).text(test_res.invite_id);
-								}
-							}); 
+							console.log(invite_id);
+							console.log(slide_key);
+
+							$(WebId).text(test_res.invite_id);
 						});
-	                </script>
+			</script>
 	</body>
 </html>

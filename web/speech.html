@@ -10,7 +10,7 @@
 	<body class="subpage">
 		<!-- Header -->
 			<header id="header">
-				<h1><a href="#">演講者平台<a>&emsp;&emsp;LINE BOT ID:@etx7735c&emsp;&emsp;邀請碼:<a id="WebId2"></a></a></a></h1>
+				<h1><a href="#">演講者平台<a>&emsp;&emsp;LINE BOT ID:@etx7735c&emsp;&emsp;邀請碼:<a id="WebId"></a></a></a></h1>
 				<a href="#menu">選單</a>
 			</header>
 		<!-- Nav -->
@@ -84,5 +84,22 @@
 			<script src="assets/js/jquery.cookie.js"></script>
 			<!-- <script src="assets/js/test2.js"></script> -->
 			<script src="assets/js/speech.js"></script>
+			<script type="text/javascript">
+				$(document).ready(function(){
+					  var meet_name=$.cookie("MeetName");
+					  var sent_id=$.cookie("SentId");
+					  var slide_link=$.cookie("SlideLink");
+					  var invite_id=$.cookie("InviteId");
+					  var slide_key=$.cookie("SlideKey");
+
+					  console.log(meet_name);
+					  console.log(sent_id);
+					  console.log(slide_link);
+					  console.log(invite_id);
+					  console.log(slide_key);
+
+					  $(WebId).text(test_res.invite_id);
+				  });
+			</script>
 	</body>
 </html>

@@ -11,12 +11,13 @@ function sent_id() {
 	var sent_id=document.getElementById('SentId').value;
 	var slide_link=document.getElementById('SlideLink').value;
 
-	var meet_name=$.cookie("MeetName");
-	var sent_id=$.cookie("SentId");
-	var slide_link=$.cookie("SlideLink");
 	console.log(meet_name);
 	console.log(sent_id);
 	console.log(slide_link);
+
+	$.cookie("MeetName",meet_name);
+	$.cookie("SentId",sent_id);
+	$.cookie("SlideLink",slide_link);
 	
 	$.ajax({
 		type: 'POST',
@@ -28,7 +29,6 @@ function sent_id() {
 			"web_id": sent_id,
 			"slide_link": slide_link
 		}),
-		// error: function(req, err){ console.log('my message' + err); }
 		success: function(test_res) {  
 			if (test_res == "create fail"){
 				alert("創建失敗啊!~")

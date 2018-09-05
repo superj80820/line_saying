@@ -41,7 +41,7 @@
 					</header>
 					<div class="flex flex-12">
 						<iframe width="35%" height="700px" src="https://awwapp.com/b/uzq1ztx9o/"></iframe>
-						<iframe width="65%" height="700px" src="https://www.slideshare.net/slideshow/embed_code/key/CxwGbWQO0mDtUE" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
+						<iframe id=iframe_slide width="65%" height="700px" src="" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
 					</div>
 				</div>
 			</section>
@@ -98,6 +98,7 @@
 					  console.log(invite_id);
 					  console.log(slide_key);
 
+					  document.getElementById("iframe_slide").src="https://www.slideshare.net/slideshow/embed_code/key/"+slide_key;
 					  $(WebId).text(test_res.invite_id);
 				  });
 			</script>

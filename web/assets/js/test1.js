@@ -22,7 +22,7 @@ $(document).ready(function() {
         success: function(test_dic) {
             var item1 ="<tbody>"
             var i;
-            var s="";
+            // var s="";
             test_j = test_dic
             n = test_j.length
             var item = '<table><thead><tr><th>Audience Name</th><th>Inquiry Content</th><th>Inquiry Time</th></tr></thead>';

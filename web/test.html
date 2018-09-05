@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>首頁  LINE-HACK</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="icon" href="images/logo.ico" type="image/x-icon" />
+
+
+		<style type="text/css">
+			/* The Modal (background) */
+			.modal {
+				display: none;
+				/* Hidden by default */
+				position: fixed;
+				/* Stay in place */
+				z-index: 1;
+				/* Sit on top */
+				left: 0;
+				top: 0;
+				width: 100%;
+				/* Full width */
+				height: 100%;
+				/* Full height */
+				overflow: auto;
+				/* Enable scroll if needed */
+				background-color: rgb(0, 0, 0);
+				/* Fallback color */
+				background-color: rgba(0, 0, 0, 0.4);
+				/* Black w/ opacity */
+			}
+			/* Modal Content/Box */
+			.modal-content {
+				background-color: #fefefe;
+				margin: 15% auto;
+				/* 15% from the top and centered */
+				padding: 20px;
+				border: 1px solid #888;
+				width: 80%;
+				/* Could be more or less, depending on screen size */
+			}
+			.close {
+				color: #aaa;
+				float: right;
+				font-size: 28px;
+				font-weight: bold;
+			}
+			.close:hover,
+			.close:focus {
+				color: black;
+				text-decoration: none;
+				cursor: pointer;
+			}
+		</style>
+
+	</head>
+	<body>
+
+
+<section class="wrapper style">
+	<div class="inner">
+				<a id="myBtn1" class="button big alt scrolly">發送訊息</a>
+				<a id="myBtn2" class="button big alt scrolly">發送圖片</a>
+		<!-- The Modal -->
+		<div id="myModal" class="modal">
+			<!-- Modal content -->
+			<div class="modal-content">
+				<span class="close">&times;</span>
+				<p>Some text in the Modal..</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+		<!-- Nav -->
+			<nav id="menu">
+				<ul class="links">
+					<img src="images/line hack.png" width="230" alt="">
+					<li><a href="home.html">首頁</a></li>
+					<li><a href="speech.html">講師頁</a></li>
+					<li><a href="audience.html">觀眾頁</a></li>
+					<li><a href="voting.html">投票頁</a></li>
+				</ul>
+			</nav>
+
+
+		<!-- Banner -->
+			<section id="banner" data-video="images/banner">
+				<div class="inner">
+					<header>
+						<h1>演講者平台</h1>
+						<p>當演講有眾多觀眾時<br>
+						演講者可以使用此服務與觀眾互動</p>
+					</header>
+					<a href="#one" class="button big alt scrolly">繼續</a>
+				</div>
+			</section>
+			<div >
+				<!-- Two -->
+					<section class="wrapper style3">
+						<div id="two" class="inner">
+							<header class="align-center">
+								<h2>演講者平台開發人員</h2>
+								<p>此演講者平台中所有開發人員的負責內容</p>
+							</header>
+							<div class="flex flex-8">
+								<div class="align-center">
+									<img class="image fit-8" src="images/ron.png" width="140" height="140" alt="" />
+									<p class="caption">張紹鍇<br />負責內容</p>
+								</div>
+								<div class="align-center">
+									<img class="image fit-8" src="images/ron.png" width="140" height="140" alt="" />
+									<p class="caption">謝昌諺<br />負責內容</p>
+								</div>
+								<div class="align-center">
+									<img class="image fit-8" src="images/ron.png" width="140" height="140" alt="" />
+									<p class="caption">林宸右<br />負責內容</p>
+								</div>
+							</div>
+						</div>
+					</section>
+			</div>
+		<!-- Scripts -->
+			<script type="text/javascript">
+				// big with
+				var modal = document.getElementById('myModal');
+				var btn1 = document.getElementById("myBtn1");
+				var btn2 = document.getElementById("myBtn2");
+				var span = document.getElementsByClassName("close")[0];
+				btn1.onclick = function () {
+					modal.style.display = "block";
+				}
+				btn2.onclick = function () {
+					modal.style.display = "block";
+				}
+				span.onclick = function () {
+					modal.style.display = "none";
+				}
+				window.onclick = function (event) {
+					if (event.target == modal) {
+						modal.style.display = "none";
+					}
+				}
+			</script>
+	</body>
+</html>

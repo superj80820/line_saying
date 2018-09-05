@@ -1,8 +1,10 @@
 $(document).ready(function() {
+    var meet_name=$.cookie("MeetName");
+    var sent_id=$.cookie("SentId");
+    var slide_link=$.cookie("SlideLink");
+    var invite_id=$.cookie("InviteId");
+    var slide_key=$.cookie("SlideKey");
 
-
-
-  
     $.ajax({
       type: 'GET',
       url: 'https://messfar.com/line_saying_api/user_say?meet_id='+sent_id,

@@ -1,7 +1,11 @@
 $(document).ready(function() {
+
+
+
+  
     $.ajax({
       type: 'GET',
-      url: 'https://lis.apps.exosite.io/api:1/lecture/01161fc5ff/log?theType=message&start_time=2018-08-14T00%3A00%3A00Z',
+      url: 'https://messfar.com/line_saying_api/user_say?meet_id='+sent_id,
       dataType: 'json',
         success: function(test_dic) {
             var item1 ="<tbody>"
@@ -11,32 +15,34 @@ $(document).ready(function() {
             n = test_j.length
             var item = '<table><thead><tr><th>Audience Name</th><th>Inquiry Content</th><th>Inquiry Time</th></tr></thead>';
             for (i=0;i<n;i++){
-              var s2 = test_j[i].time.substring(0,10);
-              var s3 = test_j[i].time.substring(11,19);
-              var id = test_j[i].userId;
-              item1 += '<tr><td><span id=na'+i+'></span></td><td>'+test_j[i].message+'</td><td>'+s2+' '+s3+'</td></tr>';
-              var name = getName(id,i);
+              // var s2 = test_j[i].time.substring(0,10);
+              // var s3 = test_j[i].time.substring(11,19);
+              var name = test_j[i].name;
+              var time = test_j[i].timestamp;
+              var id = test_j[i].name;
+              item1 += '<tr><td>'+name+'</td><td>'+test_j[i].say+'</td><td>'+time+'</td></tr>';
+              // var name = getName(id,i);
             }
             var item2 = '</tbody></table>';
             $ulT.append(item+item1+item2);
         }
     }); 
-    function getName(id,i){
-      $.ajax({
-        type: 'GET',
-        url: 'https://lis.apps.exosite.io/api:1/line/'+id,
-        dataType: 'json',
-          success: function(test_j) {
-                s = '#na'+i;
-                $(s).text(test_j.displayName);
-          },
-          error: function(){
-            s = '#na'+i
-            $(s).text('GHOST');
-          }
+    // function getName(id,i){
+    //   $.ajax({
+    //     type: 'GET',
+    //     url: 'https://lis.apps.exosite.io/api:1/line/'+id,
+    //     dataType: 'json',
+    //       success: function(test_j) {
+    //             s = '#na'+i;
+    //             $(s).text(test_j.displayName);
+    //       },
+    //       error: function(){
+    //         s = '#na'+i
+    //         $(s).text('GHOST');
+    //       }
 
-      });
-    }
+    //   });
+    // }
 
     var a=1;
     var b=1;

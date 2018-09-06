@@ -36,7 +36,7 @@ $(document).ready(function() {
               var name = test_j[i].name;
               var time = test_j[i].timestamp;
               var id = test_j[i].name;
-              if (test_j[i].image=='null'){
+              if (test_j[i].image=='null' || test_j[i].image==null){
                 image='<input type=button onclick="show_image(this)" id="ButtonImage_'+i+'" value="無">'  
               }else{
                 image='<input type=button onclick="show_image(this)" id="ButtonImage_'+i+'" value="顯示">'

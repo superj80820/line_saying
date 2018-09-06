@@ -27,7 +27,7 @@
 				<div id="one" class="inner">
 					<div class="flex flex-12">
 						<iframe width="35%" height="700px" src="https://awwapp.com/b/uzq1ztx9o/"></iframe>
-						<img src="images/banner.jpg" width="65%" height="700px">
+						<img id="change_image" src="images/banner.jpg" width="65%" height="700px">
 					</div>
 				</div>
 			</section>
@@ -40,6 +40,8 @@
 					</ul>
 				</div>
 			</section>
+
+			<input type=button id="abc" value="123">
 		<!-- Scripts -->
 			<script src="assets/js/jquery.min.js"></script>
 			<script src="assets/js/jquery.scrolly.min.js"></script>
@@ -49,5 +51,10 @@
 			<script src="assets/js/test1.js"></script>
 			<script src="assets/js/jquery.cookie.js"></script>
 			<script src="/jquery/jquery-1.11.1.min.js"></script>
+			<script type="text/javascript">
+			button.addEventListener('click', function(e) {
+				console.log(e.target.id);
+			});
+		</script>
 	</body>
 </html>

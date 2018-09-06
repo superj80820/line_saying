@@ -86,7 +86,22 @@ $(document).ready(function() {
     var invite_id=$.cookie("InviteId");
     var slide_key=$.cookie("SlideKey");
 
-    var id = '01161fc5ff';
+    var actions = [];
+
+    for (i=1;i<=4;i++){
+      str=$('#title_op'+i).val()
+      if (str == '' || str == undefined || str == null){
+        // None
+      }else{
+        actions.push({
+          "type": "postback",
+          "label": str,
+          "data": "{'type':'vote','index':'"+i+"','label':'"+str+"'}"
+      });
+      }
+    }
+    
+    console.log(actions)
     
     $.ajax({
       type: 'POST',
@@ -94,7 +109,7 @@ $(document).ready(function() {
       contentType: "application/json; charset=utf-8",
       dataType: 'json',
       data: JSON.stringify({
-        "meet_id":sent_id,
+        "meet_id":"99323",
         "vote_data":{
           "type": "template",
           "altText": "This is a buttons template",
@@ -103,17 +118,7 @@ $(document).ready(function() {
             "thumbnailImageUrl": "https://example.com/bot/images/image.jpg",
             "title": $('#title_na').val(),
             "text": "暫無設定",
-            "actions": [{
-                    "type": "postback",
-                    "label": $('#title_op1').val(),
-                    "data": "{'type':'vote','index':'1','label':'"+$('#title_op1').val()+"'}"
-                },
-                {
-                    "type": "postback",
-                    "label": $('#title_op2').val(),
-                    "data": "{'type':'vote','index':'2','label':'"+$('#title_op2').val()+"'}"
-                }
-            ]
+            "actions": actions
           }
         }
         

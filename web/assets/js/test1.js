@@ -113,7 +113,7 @@ $(document).ready(function() {
   function show_image(button){
     var image_link=$.cookie(button.id);
     alert("idd 為: " + image_link);
-    if (image_link == '' || image_link == undefined || image_link == null){
+    if (image_link == '' || image_link == undefined || image_link == null || image_link == 'null'){
       document.getElementById('change_image').src = "images/banner.jpg";
     }else{
       document.getElementById('change_image').src = image_link;

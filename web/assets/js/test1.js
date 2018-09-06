@@ -27,7 +27,7 @@ $(document).ready(function() {
             // var s="";
             test_j = test_dic
             n = test_j.length
-            var item = '<table><thead><tr><th>Audience Name</th><th>Image</th><th>Inquiry Content</th><th>Inquiry Time</th></tr></thead>';
+            var item = '<table><thead><tr><th>觀眾姓名</th><th>附加圖片</th><th>問題</th><th>留言時間</th></tr></thead>';
             for (i=0;i<n;i++){
               $.cookie("ButtonImage_"+i,test_j[i].image);
               // alert("網址 為: " + test_j[i].image);
@@ -36,8 +36,13 @@ $(document).ready(function() {
               var name = test_j[i].name;
               var time = test_j[i].timestamp;
               var id = test_j[i].name;
-              aaa='<input type=button onclick="show_image(this)" id="ButtonImage_'+i+'" value="image">'
-              item1 += '<tr><td>'+name+'</td><td>'+aaa+'</td><td>'+test_j[i].say+'</td><td>'+time+'</td></tr>';
+              if (test_j[i].image=='null'){
+                image='<input type=button onclick="show_image(this)" id="ButtonImage_'+i+'" value="無">'  
+              }else{
+                image='<input type=button onclick="show_image(this)" id="ButtonImage_'+i+'" value="顯示">'
+              }
+              
+              item1 += '<tr><td>'+name+'</td><td>'+image+'</td><td>'+test_j[i].say+'</td><td>'+time+'</td></tr>';
               // var name = getName(id,i);
             }
             var item2 = '</tbody></table>';
@@ -112,7 +117,7 @@ $(document).ready(function() {
 
   function show_image(button){
     var image_link=$.cookie(button.id);
-    alert("idd 為: " + image_link);
+    // alert("idd 為: " + image_link);
     if (image_link == '' || image_link == undefined || image_link == null || image_link == 'null'){
       document.getElementById('change_image').src = "images/banner.jpg";
     }else{

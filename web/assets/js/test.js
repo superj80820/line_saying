@@ -13,7 +13,7 @@ $(document).ready(function() {
   var n;
   $.ajax({
     type: 'GET',
-    url: 'https://messfar.com/line_saying_api/vote?meet_id='+sent_id,
+    url: 'https://messfar.com/line_saying_api/vote?meet_id='+"81025",
     dataType: 'json',
       success: function(test_dic) {
         var i;

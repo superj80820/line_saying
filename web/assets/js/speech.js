@@ -46,7 +46,7 @@ $(document).ready(function() {
     
     $.ajax({
         type: 'GET',
-        url: 'https://messfar.com/line_saying_api/meet_info?meet_id='+sent_id,
+        url: 'https://messfar.com/line_saying_api/meet_info?meet_id=99323',
         dataType: 'json',
         success: function(test_dic) {
             test_j = test_dic
@@ -72,7 +72,7 @@ $(document).ready(function() {
             contentType: "application/json; charset=utf-8",
             dataType: 'json',
             data: JSON.stringify({
-                "meet_id": sent_id,
+                "meet_id": "99323",
                 "say": $('#message').val()
             }),
             // error: function(req, err){ console.log('my message' + err); }

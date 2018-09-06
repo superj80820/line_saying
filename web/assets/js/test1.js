@@ -19,7 +19,7 @@ $(document).ready(function() {
 
     $.ajax({
       type: 'GET',
-      url: 'https://messfar.com/line_saying_api/user_say?meet_id='+"99323",
+      url: 'https://messfar.com/line_saying_api/user_say?meet_id='+sent_id,
       dataType: 'json',
         success: function(test_dic) {
             var item1 ="<tbody>"

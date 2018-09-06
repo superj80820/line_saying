@@ -7,34 +7,22 @@
 
 
 <style>
-#mwt_mwt_slider_scroll
-{
-bottom:10px;
-left:-360px;
-width:360px;
-position:fixed;
-z-index:9999;
-}
-
-#mwt_slider_content{
-text-align:center;
-padding-top:    20px;
-}
-
-#mwt_fb_tab {
-position:absolute;
-bottom:20px;
-right:-100px;
-width:100px;
-height:55px;
-text-align:center;
-padding:4px;
-}
+    #mwt_mwt_slider_scroll{
+        position:fixed;
+        bottom:30px;
+        left:-360px;
+        width:360px;
+        z-index:9999;
+    }
+    #mwt_fb_tab{
+        position:absolute;
+        right:-120px;
+    }
 </style>
 
 <style type="text/css">
 /* The Modal (background) */
-.modal {
+.functionmodal {
 display: none;
 /* Hidden by default */
 position: fixed;
@@ -52,10 +40,9 @@ overflow: auto;
 background-color: rgb(0, 0, 0);
 /* Fallback color */
 background-color: rgba(0, 0, 0, 0.4);
-/* Black w/ opacity */
 }
 /* Modal Content/Box */
-.modal-content {
+.functionmodal-content {
 background-color: #fefefe;
 margin: 15% auto;
 /* 15% from the top and centered */
@@ -81,61 +68,62 @@ cursor: pointer;
 </head>
 <body>
 
+<section id="banner" data-video="images/banner">
+</section>
 
 <div id="mwt_mwt_slider_scroll">
- <div id="mwt_fb_tab" class="button big alt scrolly">
-    <h3>功能</h3>
-</div>
-<div id="mwt_slider_content">
-                <a id="myBtn1" class="button big alt scrolly">發送訊息</a>
-                <a id="myBtn2" class="button big alt scrolly">發送圖片</a>
-                
-                <div id="myModal" class="modal">
-                    <!-- Modal content -->
-                    <div class="modal-content">
-                        <span class="close">&times;</span>
-                        <p>Some text in the Modal..</p>
-                    </div>
-                </div>
-</div>
+    <div id="mwt_fb_tab">
+        <a class="button big alt scrolly">功能</a>
+    </div>
+    <div id="mwt_slider_content">
+        <a id="myBtn1" class="button big alt scrolly">發送訊息</a>
+        <a id="myBtn2" class="button big alt scrolly">發送圖片</a>
+
+
+        <div id="myModal" class="functionmodal">
+            <!-- Modal content -->
+            <div class="functionmodal-content">
+                <input type="text" name="name" id="message" value="" placeholder="Message" />
+                <input id=send1 type="button" value="送出" /><font color=red><span id=box class="close"></span></font>
+            </div>
+        </div>
+    </div>
 </div>
 
 
 <script type='text/javascript' src='https://code.jquery.com/jquery-1.9.1.min.js'></script>
 <script type='text/javascript'>
-$(function(){
-var w = $("#mwt_slider_content").width();
-$('#mwt_slider_content').css('height', ($(window).height() -864) + 'px' ); //將區塊自動撐滿畫面高度
-$("#mwt_fb_tab").mouseover(function(){ //滑鼠滑入時
-if ($("#mwt_mwt_slider_scroll").css('left') == '-'+w+'px')
-{
-$("#mwt_mwt_slider_scroll").animate({ left:'0px' }, 600 ,'swing');
-}
-});
-$("#mwt_slider_content").mouseleave(function(){　//滑鼠離開後
-$("#mwt_mwt_slider_scroll").animate( { left:'-'+w+'px' }, 600 ,'swing');
-});
-});
+    $(function(){
+        var w = $("#mwt_slider_content").width();
+        $('#mwt_slider_content').css('height', ($(window).height() -867) + 'px' ); //將區塊自動撐滿畫面高度
+        $("#mwt_fb_tab").mouseover(function(){ //滑鼠滑入時
+            if ($("#mwt_mwt_slider_scroll").css('left') == '-'+w+'px'){
+                $("#mwt_mwt_slider_scroll").animate({ left:'0px' }, 600 ,'swing');
+            }
+        });
+            $("#mwt_slider_content").mouseleave(function(){　//滑鼠離開後
+            $("#mwt_mwt_slider_scroll").animate( { left:'-'+w+'px' }, 600 ,'swing');
+        });
+    });
 </script>
 
 <script type="text/javascript">
-// big with
-var modal = document.getElementById('myModal');
+var functionmodal = document.getElementById('myModal');
 var btn1 = document.getElementById("myBtn1");
 var btn2 = document.getElementById("myBtn2");
 var span = document.getElementsByClassName("close")[0];
 btn1.onclick = function () {
-modal.style.display = "block";
+    functionmodal.style.display = "block";
 }
 btn2.onclick = function () {
-modal.style.display = "block";
+    functionmodal.style.display = "block";
 }
 span.onclick = function () {
-modal.style.display = "none";
+    functionmodal.style.display = "none";
 }
 window.onclick = function (event) {
-if (event.target == modal) {
-modal.style.display = "none";
+if (event.target == functionmodal) {
+    functionmodal.style.display = "none";
 }
 }
 </script>

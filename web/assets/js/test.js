@@ -13,7 +13,7 @@ $(document).ready(function() {
   var n;
   $.ajax({
     type: 'GET',
-    url: 'https://messfar.com/line_saying_api/vote?meet_id='+sent_id,
+    url: 'https://messfar.com/line_saying_api/vote?meet_id='+"81025",
     dataType: 'json',
       success: function(test_dic) {
         var i;
@@ -94,7 +94,7 @@ $(document).ready(function() {
       contentType: "application/json; charset=utf-8",
       dataType: 'json',
       data: JSON.stringify({
-        "meet_id":sent_id,
+        "meet_id":"81025",
         "vote_data":{
           "type": "template",
           "altText": "This is a buttons template",

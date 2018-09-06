@@ -1,147 +1,211 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>首頁  LINE-HACK</title>
+		<title>講師頁  LINE-HACK</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<link rel="icon" href="images/logo.ico" type="image/x-icon" />
 
 
-		<style type="text/css">
-			/* The Modal (background) */
-			.modal {
-				display: none;
-				/* Hidden by default */
-				position: fixed;
-				/* Stay in place */
-				z-index: 1;
-				/* Sit on top */
-				left: 0;
-				top: 0;
-				width: 100%;
-				/* Full width */
-				height: 100%;
-				/* Full height */
-				overflow: auto;
-				/* Enable scroll if needed */
-				background-color: rgb(0, 0, 0);
-				/* Fallback color */
-				background-color: rgba(0, 0, 0, 0.4);
-				/* Black w/ opacity */
-			}
-			/* Modal Content/Box */
-			.modal-content {
-				background-color: #fefefe;
-				margin: 15% auto;
-				/* 15% from the top and centered */
-				padding: 20px;
-				border: 1px solid #888;
-				width: 80%;
-				/* Could be more or less, depending on screen size */
-			}
-			.close {
-				color: #aaa;
-				float: right;
-				font-size: 28px;
-				font-weight: bold;
-			}
-			.close:hover,
-			.close:focus {
-				color: black;
-				text-decoration: none;
-				cursor: pointer;
-			}
-		</style>
+<style>
+    #mwt_mwt_slider_scroll{
+        position:fixed;
+        bottom:30px;
+        left:-360px;
+        width:360px;
+        z-index:9999;
+    }
+    #mwt_fb_tab{
+        position:absolute;
+        right:-120px;
+    }
+</style>
+<style type="text/css">
+/* The Modal (background) */
+.modal {
+display: none;
+/* Hidden by default */
+position: fixed;
+/* Stay in place */
+z-index: 1;
+/* Sit on top */
+left: 0;
+top: 0;
+width: 100%;
+/* Full width */
+height: 100%;
+/* Full height */
+overflow: auto;
+/* Enable scroll if needed */
+background-color: rgb(0, 0, 0);
+/* Fallback color */
+background-color: rgba(0, 0, 0, 0.4);
+}
+/* Modal Content/Box */
+.modal-content {
+background-color: #fefefe;
+margin: 15% auto;
+/* 15% from the top and centered */
+padding: 20px;
+border: 1px solid #888;
+width: 80%;
+/* Could be more or less, depending on screen size */
+}
+.close {
+color: #aaa;
+float: right;
+font-size: 28px;
+font-weight: bold;
+}
+.close:hover,
+.close:focus {
+color: black;
+text-decoration: none;
+cursor: pointer;
+}
+</style>
+
 
 	</head>
-	<body>
+	<body class="subpage">
 
+            <section id="banner" data-video="images/banner">
+                <div class="inner">
+                    <header>
+                        <h1>演講者平台</h1>
+                        <p>當演講有眾多觀眾時<br>
+                        演講者可以使用此服務與觀眾互動</p>
+                    </header>
+                    <a href="#one" class="button big alt scrolly">繼續</a>
+                </div>
+            </section>
+            <div >
+                    <section class="wrapper style2">
+                        <div id="one" class="inner">
+                            <header class="align-center">
+                                <h2>演講者平台功能介紹</h2>
+                                <p>各種頁面各種功能的大概介紹</p>
+                            </header>
+                            <div class="flex flex-tabs">
+                                <ul class="tab-list">
+                                    <li><a href="#" data-tab="tab-1" class="active">講師頁</a></li>
+                                    <li><a href="#" data-tab="tab-2" class="">觀眾頁</a></li>
+                                    <li><a href="#" data-tab="tab-3" class="">投票頁</a></li>
+                                </ul>
+                                <div class="tabs">
+                                    <div class="tab tab-1 flex flex-3 active">
+                                        <div class="video col">
+                                            <div class="image fit">
+                                                <img src="images/speech1.png" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab tab-2 flex flex-3">
+                                        <div class="video col">
+                                            <div class="image fit">
+                                                <img src="images/speech1.png" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab tab-3 flex flex-3">
+                                        <div class="video col">
+                                            <div class="image fit">
+                                                <img src="images/speech1.png" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="align-center"><a href="#two" class="button big alt scrolly">繼續</a></div>
+                        </div>
+                    </section>
+                </div>
 
-<section class="wrapper style">
-	<div class="inner">
-				<a id="myBtn1" class="button big alt scrolly">發送訊息</a>
-				<a id="myBtn2" class="button big alt scrolly">發送圖片</a>
-		<!-- The Modal -->
-		<div id="myModal" class="modal">
-			<!-- Modal content -->
-			<div class="modal-content">
-				<span class="close">&times;</span>
-				<p>Some text in the Modal..</p>
-			</div>
-		</div>
-	</div>
-</section>
-
-		<!-- Nav -->
-			<nav id="menu">
-				<ul class="links">
-					<img src="images/line hack.png" width="230" alt="">
-					<li><a href="home.html">首頁</a></li>
-					<li><a href="speech.html">講師頁</a></li>
-					<li><a href="audience.html">觀眾頁</a></li>
-					<li><a href="voting.html">投票頁</a></li>
-				</ul>
-			</nav>
-
-
-		<!-- Banner -->
-			<section id="banner" data-video="images/banner">
-				<div class="inner">
-					<header>
-						<h1>演講者平台</h1>
-						<p>當演講有眾多觀眾時<br>
-						演講者可以使用此服務與觀眾互動</p>
-					</header>
-					<a href="#one" class="button big alt scrolly">繼續</a>
+<div id="mwt_mwt_slider_scroll">
+    <div id="mwt_fb_tab">
+        <button style="width:120px; height: 60px; color: red";">功能</button>
+    </div>
+    <div id="mwt_slider_content">
+        <button id="myBtn1" style="width:120px; height: 60px;">發送訊息</button>
+        <button id="myBtn2" style="width:120px; height: 60px;">發送圖片</button>
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <form action="" method="POST">
+					<input type="text" name="name" id="message" value="" placeholder="Message" />
+                <input id=send1 type="button" value="送出" /><font color=red><span id=box class="close"></span></font>
 				</div>
-			</section>
-			<div >
-				<!-- Two -->
-					<section class="wrapper style3">
-						<div id="two" class="inner">
-							<header class="align-center">
-								<h2>演講者平台開發人員</h2>
-								<p>此演講者平台中所有開發人員的負責內容</p>
-							</header>
-							<div class="flex flex-8">
-								<div class="align-center">
-									<img class="image fit-8" src="images/ron.png" width="140" height="140" alt="" />
-									<p class="caption">張紹鍇<br />負責內容</p>
-								</div>
-								<div class="align-center">
-									<img class="image fit-8" src="images/ron.png" width="140" height="140" alt="" />
-									<p class="caption">謝昌諺<br />負責內容</p>
-								</div>
-								<div class="align-center">
-									<img class="image fit-8" src="images/ron.png" width="140" height="140" alt="" />
-									<p class="caption">林宸右<br />負責內容</p>
-								</div>
-							</div>
-						</div>
-					</section>
-			</div>
+			</form>
+            </div>
+        </div>
+    </div>
+</div>
 		<!-- Scripts -->
+
+
+<script type='text/javascript' src='https://code.jquery.com/jquery-1.9.1.min.js'></script>
+<script type='text/javascript'>
+    $(function(){
+        var w = $("#mwt_slider_content").width();
+        $('#mwt_slider_content').css('height', ($(window).height() -867) + 'px' ); //將區塊自動撐滿畫面高度
+        $("#mwt_fb_tab").mouseover(function(){ //滑鼠滑入時
+            if ($("#mwt_mwt_slider_scroll").css('left') == '-'+w+'px'){
+                $("#mwt_mwt_slider_scroll").animate({ left:'0px' }, 600 ,'swing');
+            }
+        });
+            $("#mwt_slider_content").mouseleave(function(){　//滑鼠離開後
+            $("#mwt_mwt_slider_scroll").animate( { left:'-'+w+'px' }, 600 ,'swing');
+        });
+    });
+</script>
+
+<script type="text/javascript">
+var modal = document.getElementById('myModal');
+var btn1 = document.getElementById("myBtn1");
+var btn2 = document.getElementById("myBtn2");
+var span = document.getElementsByClassName("close")[0];
+btn1.onclick = function () {
+    modal.style.display = "block";
+}
+btn2.onclick = function () {
+    modal.style.display = "block";
+}
+span.onclick = function () {
+    modal.style.display = "none";
+}
+window.onclick = function (event) {
+if (event.target == modal) {
+    modal.style.display = "none";
+}
+}
+</script>
+
+
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+			<script src="assets/js/jquery.cookie.js"></script>
+			<!-- <script src="assets/js/test2.js"></script> -->
+			<script src="assets/js/speech.js"></script>
 			<script type="text/javascript">
-				// big with
-				var modal = document.getElementById('myModal');
-				var btn1 = document.getElementById("myBtn1");
-				var btn2 = document.getElementById("myBtn2");
-				var span = document.getElementsByClassName("close")[0];
-				btn1.onclick = function () {
-					modal.style.display = "block";
-				}
-				btn2.onclick = function () {
-					modal.style.display = "block";
-				}
-				span.onclick = function () {
-					modal.style.display = "none";
-				}
-				window.onclick = function (event) {
-					if (event.target == modal) {
-						modal.style.display = "none";
-					}
-				}
+				$(document).ready(function(){
+					  var meet_name=$.cookie("MeetName");
+					  var sent_id=$.cookie("SentId");
+					  var slide_link=$.cookie("SlideLink");
+					  var invite_id=$.cookie("InviteId");
+					  var slide_key=$.cookie("SlideKey");
+
+					  console.log(meet_name);
+					  console.log(sent_id);
+					  console.log(slide_link);
+					  console.log(invite_id);
+					  console.log(slide_key);
+
+					  document.getElementById("iframe_slide").src="https://www.slideshare.net/slideshow/embed_code/key/"+slide_key;
+					  $(WebId).text(invite_id);
+				  });
 			</script>
 	</body>
 </html>

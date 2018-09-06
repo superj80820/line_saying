@@ -29,12 +29,14 @@ $(document).ready(function() {
             n = test_j.length
             var item = '<table><thead><tr><th>Audience Name</th><th>Image</th><th>Inquiry Content</th><th>Inquiry Time</th></tr></thead>';
             for (i=0;i<n;i++){
+              $.cookie("ButtonImage_"+i,test_j[i].image);
+              // alert("網址 為: " + test_j[i].image);
               // var s2 = test_j[i].time.substring(0,10);
               // var s3 = test_j[i].time.substring(11,19);
               var name = test_j[i].name;
               var time = test_j[i].timestamp;
               var id = test_j[i].name;
-              aaa='<input type=button onclick="show_image()" id="button_'+i+'" value="image">'
+              aaa='<input type=button onclick="show_image(this)" id="ButtonImage_'+i+'" value="image">'
               item1 += '<tr><td>'+name+'</td><td>'+aaa+'</td><td>'+test_j[i].say+'</td><td>'+time+'</td></tr>';
               // var name = getName(id,i);
             }
@@ -108,14 +110,15 @@ $(document).ready(function() {
       }
   }); */
 
-  function show_image(){
-    var meet_name=$.cookie("MeetName");
-    var sent_id=$.cookie("SentId");
-    var slide_link=$.cookie("SlideLink");
-    var invite_id=$.cookie("InviteId");
-    var slide_key=$.cookie("SlideKey");
-  
-    document.getElementById('change_image').src = "http://blog.iprefer.com.tw/wp-content/uploads/2012/08/%E9%9F%BF%E6%87%89%E5%BC%8F%E7%B6%B2%E9%A0%81.jpg";
+  function show_image(button){
+    var image_link=$.cookie(button.id);
+    alert("idd 為: " + image_link);
+    if (image_link == '' || image_link == undefined || image_link == null){
+      document.getElementById('change_image').src = "images/banner.jpg";
+    }else{
+      document.getElementById('change_image').src = image_link;
+    }
+    
   }
   
   

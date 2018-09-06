@@ -13,7 +13,7 @@ $(document).ready(function() {
   var n;
   $.ajax({
     type: 'GET',
-    url: 'https://messfar.com/line_saying_api/vote?meet_id='+"81025",
+    url: 'https://messfar.com/line_saying_api/vote?meet_id='+"99323",
     dataType: 'json',
       success: function(test_dic) {
         var i;
@@ -28,18 +28,24 @@ $(document).ready(function() {
         for (i=1;i<=n;i++){
           item = '<h3>'+test_dic[i-1].vote_name+'<b style=font-size:15px>&emsp;<span id=person'+i+'></span>&nbsp&nbspperson voted&nbsp&nbsp&nbsp&nbsp<input type=button id=sAdd value=Add></b></h3><span id=T'+i+'_option1></span></div><div><span id=T'+i+'_option2></span>';
           $ul.append(item);
-          d1 = test_dic[i-1].vote_item[0]['label']
-          d2 = test_dic[i-1].vote_item[1]['label']
-          a1 = test_dic[i-1].vote_item[0]['vote_count']
-          a2 = test_dic[i-1].vote_item[1]['vote_count']
-          a = parseInt(a1)+parseInt(a2);
-          s1 = "#T"+i+"_option1";
-          s2 = "#T"+i+"_option2";
-          console.log(d1)
-          console.log(d2)
-          $(s1).html("<input type=radio name=vote"+i+"_tite1 checked><label>"+d1+"&nbsp&nbsp&nbsp&nbsp"+a1+"/"+a+"</label>");
-          $(s2).html("<input type=radio name=vote"+i+"_tite2><label>"+d2+"&nbsp&nbsp&nbsp&nbsp"+a2+"/"+a+"</label>");
-          var id = test_dic[i-1].voteId
+          option_long=test_dic[i-1].vote_item.length
+          console.log(option_long)
+          for (i2=0;i2<=option_long-1;i2++){
+            console.log(test_dic[i-1].vote_item[i2])
+            d1 = test_dic[i-1].vote_item[i2]['label']
+            // d2 = test_dic[i-1].vote_item[1]['label']
+            a1 = test_dic[i-1].vote_item[i2]['vote_count']
+            // a2 = test_dic[i-1].vote_item[1]['vote_count']
+            // a = parseInt(a1)+parseInt(a2);
+            s1 = "#T"+i+"_option"+i2;
+            // s2 = "#T"+i+"_option2";
+            // console.log(d1)
+            // console.log(d2)
+            $(s1).html("<input type=radio name=vote"+i+"_tite"+i2+"><label>"+d1+"&nbsp&nbsp&nbsp&nbsp"+a1+"</label>");
+            // $(s2).html("<input type=radio name=vote"+i+"_tite2><label>"+d2+"&nbsp&nbsp&nbsp&nbsp"+a2+"/"+a+"</label>");
+          }
+          
+          // var id = test_dic[i-1].voteId
           // getBody(id,i,d1,d2);
         }
       }

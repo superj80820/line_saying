@@ -133,10 +133,20 @@ cursor: pointer;
             <div class="modal-content">
                 <form action="" method="POST">
 					<input type="text" name="name" id="message" value="" placeholder="Message" />
-                <input id=send1 type="button" value="送出" /><font color=red><span id=box class="close"></span></font>
-				</div>
-			</form>
+                    <input id=send1 type="button" value="送出" /><font color=red><span id=box></span></font><span class="close">&times;</span>
+                </form>
             </div>
+
+            <div id="myModal" class="modal">
+                <form action="" method="POST">
+                    <h4>請輸入要發送至 Line Bot 的訊息 :</h4>
+                    <div class="6u 12u$(xsmall)">
+                        <input type="text" name="name" id="message" value="" placeholder="Message" />
+                        <input id=send1 type="button" value="送出" /><font color=red><span id=box></span></font>
+                    </div>
+                </form>
+            </div>
+            
         </div>
     </div>
 </div>

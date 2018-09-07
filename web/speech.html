@@ -11,6 +11,11 @@
 		<!-- Header -->
 			<header id="header">
 				<h1><a href="#">演講者平台<a>&emsp;&emsp;LINE BOT ID:@etx7735c&emsp;&emsp;邀請碼:<a id="WebId"></a></a></a></h1>
+                    <form style="display:inline; position:relative; right:400px;"" action="" method="POST">
+                            <input style="width:300px; display:inline;" id="message" name="name" type="text" placeholder="請輸入要發送至 Line Bot 的訊息">
+                            <input id=sent_image name="image" type="File">
+                            <input id=comet type="button" value="送出" /><font color=red><span id=box></span></font>
+                    </form>
 				<a href="#menu">選單</a>
 			</header>
 		<!-- Nav -->
@@ -43,36 +48,6 @@
 						<iframe width="35%" height="700px" src="https://awwapp.com/b/uzq1ztx9o/"></iframe>
 						<iframe id=iframe_slide width="65%" height="700px" src="" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
 					</div>
-				</div>
-			</section>
-		<!-- Three -->
-			<section id="three" class="wrapper style1">
-				<div class="inner">
-					<h2>發送訊息</h2>
-					<form action="" method="POST">
-						<h4>請輸入要發送至 Line Bot 的訊息 :</h4>
-						<div class="6u 12u$(xsmall)">
-							<input type="text" name="name" id="message" value="" placeholder="Message" />
-							<input id=send1 type="button" value="送出" /><font color=red><span id=box></span></font>
-						</div>
-					</form>
-				</div>
-			</section>
-		<!-- I am a dividing line -->
-			<section class="wrapper style3"></section>
-		<!-- Four -->
-			<section class="wrapper style1">
-				<div class="inner">
-					<h2>發送圖片</h2>
-					<form id="image_data" method="post">
-						<h4>請上傳要發送至 Line Bot 的圖片 :</h4>
-						<div class="6u 12u$(xsmall)">
-							<input id=sent_image name="image" type="File">
-							<!-- <input type="text" name="meet_id" value="66804" /> -->
-							<!-- <input id=send2 type="button" value="送出" /><font color=red><span id=box></span></font> -->
-							<button>Submit</button><font color=red><span id=box2></span></font>
-						</div>
-					</form>
 				</div>
 			</section>
 		<!-- Scripts -->

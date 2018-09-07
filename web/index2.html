@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>LINE-HACK2018</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="icon" href="images/logo.ico" type="image/x-icon" />
+	</head>
+	<body>
+		<!-- Main -->
+			<br /><br /><br /><br />
+			<div id=verify class="align-center">	
+				<h3>請輸入演講名稱</h3>
+				<center><input type=text id=MeetName name=MeetName style="height:40px;width:400px"></center><br />
+				<h3>請輸入演講描述</h3>
+				<center><input type=text id=MeetTopic name=MeetName style="height:40px;width:400px"></center><br />
+				<h3>請輸入驗證碼</h3>
+				<center><input type=text id=SentId name=SentId style="height:40px;width:400px"></center><br />
+				<h3>請輸入簡報網頁</h3>
+				<center><input type=text id=SlideLink name=SlideLink style="height:40px;width:400px"></center><br />
+				<form id="image_data" method="post">
+					<h3>請上傳簡報檔案</h3>
+					<input id=sent_image name="image" type="File">
+				</form>
+				<input type=button id=sent onclick='sent_id()' value=送出>
+			</div>
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+			<script src="assets/js/index.js"></script>
+			<script src="assets/js/jquery.cookie.js"></script>
+			
+	</body>
+</html>

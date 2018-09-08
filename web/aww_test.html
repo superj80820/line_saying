@@ -1,15 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8" />
+   <title>drawd.io</title>
+
+   <!-- Script: Jquery, AwwApp -->
+   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+   <script src="https://awwapp.com/static/widget/js/aww.min.js"></script>
+   <!-- Google Font: Poiret One -->
+   <!-- <link href="https://fonts.googleapis.com/css?family=Poiret+One" rel="stylesheet"> -->
+   <!-- Stylesheet -->
+   <!-- <link rel="stylesheet" href="index.css"> -->
+
+</head>
+
 <body>
-    <div style="width: 600px; height: 400px;" id="aww-wrapper">
-    <!-- Element in which the whiteboard will be shown
-              – modify style as needed -->
-    </div>
-    <!-- <script src="https://awwapp.com/static/widget/js/aww3.min.js"> -->
-    <script src="assets/js/aww3.min.js"></script>
-    </script>
-    <script type="text/javascript">
-        var aww = new AwwBoard('#aww-wrapper', {
-            apiKey: '391e33ce-16fb-41e9-aced-ad424988deba',
-            boardLink: '12333'
-        });
-    </script>
+    
+   <!-- canvas -->
+   <div id="cover">
+        <div style="width:570px; height:500px;" id="aww-wrapper"></div>
+   </div>
+
+   
+   <input id=sent_button type="button" value="送出" onclick="change_image()" />
+   
+
+   <!-- External Script: jQuery, local main.js -->
+   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.2/howler.core.min.js"></script> -->
+   <!-- <script src="TweenMax.js"></script> -->
+   <script src="assets/js/aww_test.js"></script>
+   <!-- <script src="animation.js"></script> -->
 </body>
+</html>

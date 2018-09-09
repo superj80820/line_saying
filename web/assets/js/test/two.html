@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>repl.it</title>
+    <link href="index.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="jquery.min.js"></script>
+	<script type="text/javascript" src="jquery.scrolly.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        var result = "";
+        var refDoc = $(window.opener.document);
+        var value = $("#SentId", refDoc).val();
+        result = value;
+        $("#WebId").val(result);
+      });
+    </script>
+  </head>
+  <body>
+    <input type="text" id="WebId" name="WebId"  />
+    </body>
+</html>

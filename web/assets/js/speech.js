@@ -43,16 +43,36 @@ $(document).ready(function() {
     var meet_name=$.cookie("MeetName");
 	var sent_id=$.cookie("SentId");
     var slide_link=$.cookie("SlideLink");
-    
+    var invite_id=$.cookie("InviteId");
+    var slide_key=$.cookie("SlideKey");
+    var aww_link=$.cookie("AwwLink");
+    var meet_detail=$.cookie("MeetDetail");
+
+    console.log(meet_name);
+    console.log(meet_detail);
+    console.log(sent_id);
+    console.log(slide_link);
+    console.log(invite_id);
+    console.log(slide_key);
+    console.log(aww_link);
+
+    document.getElementById("title").innerHTML=meet_name;
+    document.getElementById("title2").innerHTML=meet_detail;
+    document.getElementById("AwwLink").src="https://awwapp.com/b/"+aww_link;
+    document.getElementById("IframeSlide").src="https://www.slideshare.net/slideshow/embed_code/key/"+slide_key;
+    $(WebId).text(invite_id);
+    // document.getElementById("title").text='meet_name';
+    // $(title).text(meet_name)
+    // $(title2).text(detail)
+
     $.ajax({
         type: 'GET',
-        url: 'https://messfar.com/line_saying_api/meet_info?meet_id=99323',
+        url: 'https://messfar.com/line_saying_api/meet_info?meet_id='+sent_id,
         dataType: 'json',
         success: function(test_dic) {
             test_j = test_dic
             console.log(test_j);
-            $("#title").text(test_j.meet_name)
-            $("#title2").text(test_j.meet_name+"(info暫無設計)")
+            
             }
     });
     

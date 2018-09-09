@@ -27,6 +27,8 @@ $( document ).ready(function() {
 // /******************* Embedding Aww Board *******************/
 
 function change_image(){
+  console.log(aww.defaultOps())
+  console.log(aww.getBoardInfo());
   aww.drawImage('images/4.jpg', 0, 0);
 }
 
@@ -35,10 +37,14 @@ function change_image(){
 // Aww board API, board initialization
 
  var aww = new AwwBoard('#aww-wrapper', {
-    menuOrder: ['colors', 'sizes', 'tools'],
+    menuOrder: ['colors', 'sizes', 'tools', 'admin','utils'],
+    tools: ['pencil', 'eraser', 'text', 'image'],
     apiKey: '2be81bd6-3cf1-4a90-bdc4-f111d470537d',
-    boardLink: '12331',
+    boardLink: '5aj5342-56tz-uhjk-9874',
     autoJoin: true,
+    multiPage: true,
+    sendUserPointer: true,
+    showUserPointers: true
 });
 
 // // Get dataURL of current canvas

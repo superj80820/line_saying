@@ -13,6 +13,8 @@ import ast
 import requests
 import pandas
 import sqlite3 as sqlite
+from selenium import webdriver
+from selenium.webdriver.support.ui import Select
 from flask import Flask, request, abort, jsonify
 from flask_cors import CORS
 
@@ -229,47 +231,78 @@ def handle_postback(event):
             
 @app.route('/create_meet', methods=['POST'])
 def create_meet():
-    def meet_data(invite_id,web_id,slide_key,meet_name):
+    def meet_data(invite_id,web_id,slide_key,meet_name,aww_link,detail):
         conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,web_id))
         c = conn.cursor()
         data = 'name TEXT,id TEXT,say TEXT,timestamp TEXT,image TEXT'
-        c.execute('CREATE TABLE info(meet_name TEXT,invite_id TEXT,web_id TEXT,slide_key TEXT)')
+        c.execute('CREATE TABLE info(meet_name TEXT,invite_id TEXT,web_id TEXT,slide_key TEXT,aww_link TEXT,detail TEXT)')
         c.execute('CREATE TABLE user_say(%s)'%(data))
         c.execute('CREATE TABLE vote_sort(sort INTEGER PRIMARY KEY AUTOINCREMENT,vote_id TEXT NOT NULL)')
-        c.execute('INSERT INTO info (meet_name,invite_id,web_id,slide_key) VALUES ("%s","%s","%s","%s")'%(meet_name,invite_id,web_id,slide_key))
+        c.execute('INSERT INTO info (meet_name,invite_id,web_id,slide_key,aww_link,detail) VALUES ("%s","%s","%s","%s","%s","%s")'%(meet_name,invite_id,web_id,slide_key,aww_link,detail))
         conn.commit()
         conn.close()
+    def get_aww_link():
+        option = webdriver.FirefoxOptions()
+        option.add_argument("--headless")
+        driver = webdriver.Firefox(firefox_options=option)
+        driver.get('https://awwapp.com')
+        print('go web')
+        element = driver.find_element_by_xpath('//*[@id="start-drawing-widget"]/div/div[2]/div[1]/a')
+        element.click()
+        print('click start')
+        element = driver.find_element_by_xpath('//*[@id="collaborate-button"]')
+        element.click()
+        print('click share')
+        while True:
+            html_res = driver.page_source
+            print('search invite id')
+            print(str(re.search('%2Fb%2F.+%2F',html_res)))
+            if re.search('%2Fb%2F.+%2F',html_res):
+                aww_link = re.search('%2Fb%2F.+%2F',html_res).group(0)
+                aww_link = aww_link[7:16]
+                break
+            time.sleep(1)
+        driver.quit()
+        return aww_link
+    def get_slide_link(slide_link):
+        res = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json'%(slide_link))
+        res = json.loads(res.text)
+        slide_key = res['html']
+        slide_key = re.search('key/\w{14}',slide_key).group(0)
+        slide_key = slide_key[4:len(slide_key)]
+        return slide_key
+
     meet_name=request.get_json()['meet_name']
     web_id=request.get_json()['web_id']
     slide_link=request.get_json()['slide_link']
-
-    res = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json'%(slide_link))
-    res = json.loads(res.text)
-    slide_key = res['html']
-    slide_key = re.search('key/\w{14}',slide_key).group(0)
-    slide_key = slide_key[4:len(slide_key)]
+    detail=request.get_json()['detail']
 
     conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
     c = conn.cursor()
-    try:
-        ans=c.execute("SELECT * FROM meet_check WHERE api_request='%s'" %(web_id))
-        if ans != []:
-            sent_id=list(ans)[0][2]
-            c.execute('UPDATE meet_check SET web_pass ="pass" WHERE api_request ="%s"'%(web_id))
-            invite_id = c.execute('SELECT invite_id FROM meet_check WHERE api_request ="%s"'%(web_id))
-            invite_id = invite_id.fetchall()[0][0]
-            meet_data(invite_id,web_id,slide_key,meet_name)
-            line_bot_api.push_message(sent_id, TextSendMessage(text='已驗證成功~\n邀請碼是%s'%(invite_id)))
-            conn.commit()
-            conn.close()
+    ans=c.execute("SELECT * FROM meet_check WHERE api_request='%s'" %(web_id))
+    ans=ans.fetchall()
+    is_pass = c.execute('SELECT web_pass FROM meet_check WHERE api_request ="%s"'%(web_id))
+    is_pass = is_pass.fetchall()
+    if  ans != [] and is_pass[0][0] != 'pass':
+        sent_id=list(ans)[0][2]
+        c.execute('UPDATE meet_check SET web_pass ="pass" WHERE api_request ="%s"'%(web_id))
+        invite_id = c.execute('SELECT invite_id FROM meet_check WHERE api_request ="%s"'%(web_id))
+        invite_id = invite_id.fetchall()[0][0]
 
-            ret={'invite_id':invite_id,"web_id":web_id,"slide_key":slide_key,"meet_name":meet_name}
-            return jsonify(ret)
-    except:
-        None
-    conn.commit()
-    conn.close()
-    return "create fail"
+        slide_key=get_slide_link(slide_link)
+        aww_link=get_aww_link()
+        meet_data(invite_id,web_id,slide_key,meet_name,aww_link,detail)
+        line_bot_api.push_message(sent_id, TextSendMessage(text='已驗證成功~\n邀請碼是%s\n白板連結\nhttps://awwapp.com/b/%s'%(invite_id,aww_link)))
+        conn.commit()
+        conn.close()
+
+        ret={'invite_id':invite_id,"web_id":web_id,"slide_key":slide_key,"meet_name":meet_name,"aww_link":aww_link,'detail':detail}
+        return jsonify(ret)
+    else:
+        conn.commit()
+        conn.close()
+
+        return "create fail"
 
 @app.route('/meet_info', methods=['GET'])
 def meet_info():
@@ -287,7 +320,9 @@ def meet_info():
     ret['meet_name'] = get_info(meet_id,'meet_name') 
     ret['invite_id'] = get_info(meet_id,'invite_id') 
     ret['web_id'] = get_info(meet_id,'web_id') 
-    ret['slide_key'] = get_info(meet_id,'slide_key') 
+    ret['slide_key'] = get_info(meet_id,'slide_key')
+    ret['aww_link'] = get_info(meet_id,'aww_link')
+    ret['detail'] = get_info(meet_id,'detail')
 
     return jsonify(ret)
     
@@ -336,54 +371,76 @@ def post_vote():
 
 @app.route('/say', methods=['POST'])
 def say():
-    say=request.get_json()['say']
-    meet_id=request.get_json()['meet_id']
-    
-    conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
-    c = conn.cursor()
-    user_id = c.execute('SELECT id FROM user_in_where WHERE meet ="%s"'%(meet_id))
-    user_id = user_id.fetchall()
-    
-    for item in user_id:
-        headers = {'Content-Type':'application/json','Authorization':'Bearer %s'%(line_token)}
-        payload = {
-            'to':item[0],
-            'messages':[{"type":"text","text":"%s"%(say)}]
-            }
-        res=requests.post('https://api.line.me/v2/bot/message/push',headers=headers,json=payload)
-    
-    conn.commit()  
-    conn.close()
- 
-    return 'ok'
-
-
-@app.route('/sent_image', methods=['POST'])
-def sent_image():
+    if '' == request.form['say']:
+        say = None
+    else:
+        say = request.form['say']
+    if "image" not in request.files :
+        image = None
+    else:
+        image = request.files['image']
     meet_id = request.form['meet_id']
-    image = request.files['image']
     timestamp = str(int(time.time()))
-
-    image.save('%sdata/image/speech/%s.jpg'%(FileRout,timestamp))
-    image_url = 'https://messfar.com/line_saying_data/speech/%s.jpg'%(timestamp)
+    messages = []
     
-    conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
-    c = conn.cursor()
-    user_id = c.execute('SELECT id FROM user_in_where WHERE meet ="%s"'%(meet_id))
-    user_id = user_id.fetchall()
+    if image != None:
+        print('add image')
+        image.save('%sdata/image/speech/%s.jpg'%(FileRout,timestamp))
+        image_url = 'https://messfar.com/line_saying_data/speech/%s.jpg'%(timestamp)
+        messages += [{"type": "image","originalContentUrl": "%s"%(image_url),"previewImageUrl": "%s"%(image_url)}]
+    if say != None:
+        print("add say")
+        messages += [{"type":"text","text":"%s"%(say)}]
     
-    for item in user_id:
-        headers = {'Content-Type':'application/json','Authorization':'Bearer %s'%(line_token)}
-        payload = {
-            'to':item[0],
-            'messages':[{"type": "image","originalContentUrl": "%s"%(image_url),"previewImageUrl": "%s"%(image_url)}]
-            }
-        res=requests.post('https://api.line.me/v2/bot/message/push',headers=headers,json=payload)
-    
-    conn.commit()  
-    conn.close()
+    print(messages)
+    if messages != []:
+        conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
+        c = conn.cursor()
+        user_id = c.execute('SELECT id FROM user_in_where WHERE meet ="%s"'%(meet_id))
+        user_id = user_id.fetchall()
+        
+        for item in user_id:
+            headers = {'Content-Type':'application/json','Authorization':'Bearer %s'%(line_token)}
+            payload = {
+                'to':item[0],
+                'messages':messages
+                }
+            res=requests.post('https://api.line.me/v2/bot/message/push',headers=headers,json=payload)
+        
+        conn.commit()  
+        conn.close()
  
-    return 'ok'
+        return 'ok'
+    else:
+        return 'not sent anything'
+
+
+# @app.route('/sent_image', methods=['POST'])
+# def sent_image():
+#     meet_id = request.form['meet_id']
+#     image = request.files['image']
+#     timestamp = str(int(time.time()))
+
+#     image.save('%sdata/image/speech/%s.jpg'%(FileRout,timestamp))
+#     image_url = 'https://messfar.com/line_saying_data/speech/%s.jpg'%(timestamp)
+    
+#     conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
+#     c = conn.cursor()
+#     user_id = c.execute('SELECT id FROM user_in_where WHERE meet ="%s"'%(meet_id))
+#     user_id = user_id.fetchall()
+    
+#     for item in user_id:
+#         headers = {'Content-Type':'application/json','Authorization':'Bearer %s'%(line_token)}
+#         payload = {
+#             'to':item[0],
+#             'messages':[{"type": "image","originalContentUrl": "%s"%(image_url),"previewImageUrl": "%s"%(image_url)}]
+#             }
+#         res=requests.post('https://api.line.me/v2/bot/message/push',headers=headers,json=payload)
+    
+#     conn.commit()  
+#     conn.close()
+ 
+#     return 'ok'
 
 @app.route('/user_say', methods=['GET'])
 def user_say():

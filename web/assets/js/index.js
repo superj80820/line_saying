@@ -1,23 +1,18 @@
 function sent_id() {
-// window.location.href="https://messfar.com/line_saying/home.html";
-// window.open("https://messfar.com/line_saying/");
-//  window.open('','_top'); 
-//  window.top.close(); 
-//  window.location = "https://messfar.com/line_saying/home.html" 
-//  window.open("home.html");
-//  window.close();
-//  window.open("index.html");
 	var meet_name=document.getElementById('MeetName').value;
 	var sent_id=document.getElementById('SentId').value;
 	var slide_link=document.getElementById('SlideLink').value;
+	var meet_detail=document.getElementById('MeetDetail').value;
 
 	console.log(meet_name);
 	console.log(sent_id);
 	console.log(slide_link);
+	console.log(meet_detail);
 
 	$.cookie("MeetName",meet_name);
 	$.cookie("SentId",sent_id);
 	$.cookie("SlideLink",slide_link);
+	$.cookie("MeetDetail",meet_detail);
 	
 	$.ajax({
 		type: 'POST',
@@ -27,7 +22,8 @@ function sent_id() {
 		data: JSON.stringify({
 			"meet_name": meet_name,
 			"web_id": sent_id,
-			"slide_link": slide_link
+			"slide_link": slide_link,
+			"detail":meet_detail
 		}),
 		success: function(test_res) {  
 			if (test_res == "create fail"){
@@ -37,8 +33,10 @@ function sent_id() {
 				console.log(test_res)
 				$.cookie("InviteId",test_res.invite_id);
 				$.cookie("SlideKey",test_res.slide_key);
+				$.cookie("AwwLink",test_res.aww_link);
 				console.log(test_res.invite_id);
 				console.log(test_res.slide_key);
+				console.log(test_res.aww_link);
 				
 				window.location.href="speech.html";
 			}

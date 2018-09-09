@@ -4,8 +4,7 @@ $(document).ready(function() {
     var slide_link=$.cookie("SlideLink");
     var invite_id=$.cookie("InviteId");
     var slide_key=$.cookie("SlideKey");
-
-
+    var aww_link=$.cookie("AwwLink");
     
     console.log(meet_name);
     console.log(sent_id);
@@ -15,7 +14,6 @@ $(document).ready(function() {
 
     $(WebId).text(invite_id);
     document.getElementById("AwwLink").src="https://awwapp.com/b/"+aww_link;
-    
 
     $.ajax({
       type: 'GET',

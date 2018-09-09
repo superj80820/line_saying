@@ -126,7 +126,7 @@ def handle_message(event):
         conn.commit()
         conn.close()
 
-    elif event.message.text[0] == '?':
+    elif event.message.text[0] == '?' or event.message.text[0] == '？':
         say=event.message.text[1:len(event.message.text)]
 
         conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))

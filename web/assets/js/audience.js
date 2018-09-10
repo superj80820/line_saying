@@ -13,7 +13,7 @@ $(document).ready(function() {
     console.log(slide_key);
 
     $(WebId).text(invite_id);
-    document.getElementById("AwwLink").src="https://awwapp.com/b/"+aww_link;
+    document.getElementById("AwwLink").src="https://awwapp.com/b/"+aww_link+"/";
 
     $.ajax({
       type: 'GET',

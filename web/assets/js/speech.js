@@ -58,7 +58,7 @@ $(document).ready(function() {
 
     document.getElementById("title").innerHTML=meet_name;
     document.getElementById("title2").innerHTML=meet_detail;
-    document.getElementById("AwwLink").src="https://awwapp.com/b/"+aww_link;
+    document.getElementById("AwwLink").src="https://awwapp.com/b/"+aww_link+"/";
     document.getElementById("IframeSlide").src="https://www.slideshare.net/slideshow/embed_code/key/"+slide_key;
     $(WebId).text(invite_id);
     // document.getElementById("title").text='meet_name';

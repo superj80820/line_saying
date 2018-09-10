@@ -1,70 +1,17 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-	<head>
-		<title>講師頁  LINE-HACK</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<link rel="icon" href="images/logo.ico" type="image/x-icon" />
-
-
+<head>
 <style>
-    #mwt_mwt_slider_scroll{
-        position:fixed;
-        bottom:30px;
-        left:-360px;
-        width:360px;
-        z-index:9999;
-    }
-    #mwt_fb_tab{
-        position:absolute;
-        right:-120px;
-    }
-</style>
-<style type="text/css">
-/* The Modal (background) */
-.modal {
-display: none;
-/* Hidden by default */
-position: fixed;
-/* Stay in place */
-z-index: 1;
-/* Sit on top */
-left: 0;
-top: 0;
-width: 100%;
-/* Full width */
-height: 100%;
-/* Full height */
-overflow: auto;
-/* Enable scroll if needed */
-background-color: rgb(0, 0, 0);
-/* Fallback color */
-background-color: rgba(0, 0, 0, 0.4);
+.flex-container {
+display: flex;
 }
-/* Modal Content/Box */
-.modal-content {
-background-color: #fefefe;
-margin: 15% auto;
-/* 15% from the top and centered */
-padding: 20px;
-border: 1px solid #888;
-width: 80%;
-/* Could be more or less, depending on screen size */
-}
-.close {
-color: #aaa;
-float: right;
-font-size: 28px;
-font-weight: bold;
-}
-.close:hover,
-.close:focus {
-color: black;
-text-decoration: none;
-cursor: pointer;
+
+.flex-container > div {
+width: 100px;
+text-align: center;
 }
 </style>
+<<<<<<< HEAD
 
 
 	</head>
@@ -212,10 +159,14 @@ if (event.target == modal) {
 					  console.log(slide_link);
 					  console.log(invite_id);
 					  console.log(slide_key);
+=======
+</head>
+<body>
+<div class="flex-container">
+<iframe style="flex-grow: 2" height="700px" src="https://awwapp.com/b/uzq1ztx9o/"></iframe>
+<div style="flex-grow: 8"><img id="change_image" src="images/1.jpg"  height="700px"></div>
+</div>
+>>>>>>> 8000a197a7be6d9bd43fc4f99d7a9d2dd82e332b
 
-					  document.getElementById("iframe_slide").src="https://www.slideshare.net/slideshow/embed_code/key/"+slide_key;
-					  $(WebId).text(invite_id);
-				  });
-			</script>
-	</body>
+</body>
 </html>

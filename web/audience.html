@@ -6,6 +6,16 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<link rel="icon" href="images/logo.ico" type="image/x-icon" />
+<style>
+.flex-container {
+display: flex;
+}
+
+.flex-container > div {
+width: 100px;
+text-align: center;
+}
+</style>
 	</head>
 	<body class="subpage">
 		<!-- Header -->
@@ -30,9 +40,9 @@
 		<!-- One -->
 			<section class="wrapper style1">
 				<div id="one" class="inner">
-					<div class="flex flex-12">
-						<iframe width="35%" height="700px" src="https://awwapp.com/b/uzq1ztx9o/"></iframe>
-						<img id="change_image" src="images/banner.jpg" width="65%" height="700px">
+					<div class="flex-container">
+						<iframe style="flex-grow: 2" height="700px" src="https://awwapp.com/b/uzq1ztx9o/"></iframe>
+						<div style="flex-grow: 8"><img id="change_image" src="images/lunch.jpg"  height="700px"></div>
 					</div>
 				</div>
 			</section>

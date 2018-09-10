@@ -17,6 +17,7 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from flask import Flask, request, abort, jsonify
 from flask_cors import CORS
+from pyvirtualdisplay import Display
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -34,7 +35,7 @@ CORS(app)
 line_token = 'D9I+Oxtoll926dCqHX3bnx6fhiAqKt28n/PQYmaeGjsmG3Uq+W+tspiRQaAW6AZTQKpZuvi9VAFFpL8+EBhExS1U/zjqRCoVF2lpDwFgDvf6k9bOrlgB8fEcBJCgTd9g41oQ7iTMb3o0t2qPddQskgdB04t89/1O/w1cDnyilFU='
 line_bot_api = LineBotApi(line_token)
 handler = WebhookHandler('e840717929fb3e363919b0b31b86f056')
-FileRout=''
+FileRout='/var/www/line_saying/api/'
 #/var/www/line_saying/api/
 
 def USER_GET_MEET_ID(user_id):
@@ -242,6 +243,7 @@ def create_meet():
         conn.commit()
         conn.close()
     def get_aww_link():
+        '''
         option = webdriver.FirefoxOptions()
         option.add_argument("--headless")
         driver = webdriver.Firefox(firefox_options=option)
@@ -262,7 +264,12 @@ def create_meet():
                 aww_link = aww_link[7:16]
                 break
             time.sleep(1)
+        driver.close()
         driver.quit()
+	return aww_link
+        '''
+        #由於selenium實在是無法在apache開起來 只好再開一台虛擬機當作api
+        aww_link = requests.get("http://104.198.88.24/get_aww_link").text
         return aww_link
     def get_slide_link(slide_link):
         res = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json'%(slide_link))
@@ -501,5 +508,5 @@ def test():
     return 'ok'
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0',port=80)
 

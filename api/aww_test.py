@@ -4,6 +4,9 @@ from selenium.webdriver.support.ui import Select
 import re
 import requests
 import json
+from pyvirtualdisplay import Display
+display = Display(visible=0, size=(800, 600))
+display.start()
 
 option = webdriver.FirefoxOptions()
 option.add_argument("--headless")
@@ -26,6 +29,8 @@ while True:
         aww_link = aww_link[7:16]
         break
     time.sleep(1)
-    
+
+driver.close()
 driver.quit()
+display.stop()
 print(aww_link)

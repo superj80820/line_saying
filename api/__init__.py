@@ -17,7 +17,6 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from flask import Flask, request, abort, jsonify
 from flask_cors import CORS
-from pyvirtualdisplay import Display
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -35,7 +34,7 @@ CORS(app)
 line_token = 'D9I+Oxtoll926dCqHX3bnx6fhiAqKt28n/PQYmaeGjsmG3Uq+W+tspiRQaAW6AZTQKpZuvi9VAFFpL8+EBhExS1U/zjqRCoVF2lpDwFgDvf6k9bOrlgB8fEcBJCgTd9g41oQ7iTMb3o0t2qPddQskgdB04t89/1O/w1cDnyilFU='
 line_bot_api = LineBotApi(line_token)
 handler = WebhookHandler('e840717929fb3e363919b0b31b86f056')
-FileRout='/var/www/line_saying/api/'
+FileRout=''
 #/var/www/line_saying/api/
 
 def USER_GET_MEET_ID(user_id):
@@ -46,6 +45,15 @@ def USER_GET_MEET_ID(user_id):
     conn.commit()
     conn.close()
     return meet_id
+
+def GET_INFO(meet_id,what):
+    conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
+    c = conn.cursor()
+    info = c.execute('SELECT %s FROM info'%(what))
+    info = info.fetchall()[0][0]
+    conn.commit()
+    conn.close()
+    return info
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -82,6 +90,14 @@ def handle_message(event):
     elif re.match('[0-9]{5}$', event.message.text) != None:
         invite_id = re.match('[0-9]{5}$', event.message.text).group(0)
         
+
+        # conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
+        # c = conn.cursor()
+        # meet_id = c.execute('SELECT meet FROM user_in_where WHERE id ="%s"'%(user_id))
+        # meet_id = meet_id.fetchall()[0][0]
+        # conn.commit()
+        # conn.close()
+
         conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
         c = conn.cursor()
         api_request = c.execute('SELECT api_request FROM meet_check WHERE web_pass ="pass" AND invite_id ="%s"'%(invite_id))
@@ -91,9 +107,48 @@ def handle_message(event):
                 c.execute('INSERT INTO user_in_where (id,meet) VALUES ("%s","%s")'%(event.source.user_id,api_request[0][0]))
             except:
                 c.execute('UPDATE user_in_where SET meet ="%s" WHERE id ="%s"'%(api_request[0][0],event.source.user_id))
-            line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text='已加入meeting囉~\n請問你要匿名還是公開姓名呢?'))
+            slide_link = GET_INFO(api_request[0][0],'slide_link')
+            meet_name = GET_INFO(api_request[0][0],'meet_name')
+            detail = GET_INFO(api_request[0][0],'detail')
+            image_map = {
+                "type": "imagemap",
+                "baseUrl": "https://i.imgur.com/zrRbpja.png",
+                "altText": "This is an imagemap",
+                "baseSize": {
+                    "width": 1040,
+                    "height": 112
+                    },
+                "actions": [
+                    {
+                    "type": "message",
+                    "area": {
+                        "x": 0,
+                        "y": 0,
+                        "width": 527,
+                        "height": 112
+                    },
+                    "text": "/public_yes"
+                    },
+                    {
+                    "type": "message",
+                    "area": {
+                        "x": 527,
+                        "y": 4,
+                        "width": 513,
+                        "height": 108
+                        },
+                    "text": "/public_no"
+                    }
+                    ]
+                }
+
+            headers = {'Content-Type':'application/json','Authorization':'Bearer %s'%(line_token)}
+            payload = {
+                'replyToken':event.reply_token,
+                'messages':[{"type":"text","text":"歡迎加入meeting~\n演講名稱：%s\n演講細節：%s\nPTT連結：%s"%(meet_name,detail,slide_link)},
+                {"type":"text","text":"請問你要匿名還是公開姓名呢?"},image_map]
+                }
+            res=requests.post('https://api.line.me/v2/bot/message/reply',headers=headers,json=payload)
         else:
             line_bot_api.reply_message(
                 event.reply_token,
@@ -232,14 +287,14 @@ def handle_postback(event):
             
 @app.route('/create_meet', methods=['POST'])
 def create_meet():
-    def meet_data(invite_id,web_id,slide_key,meet_name,aww_link,detail):
+    def meet_data(invite_id,web_id,slide_key,meet_name,aww_link,detail,slide_link):
         conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,web_id))
         c = conn.cursor()
         data = 'name TEXT,id TEXT,say TEXT,timestamp TEXT,image TEXT'
-        c.execute('CREATE TABLE info(meet_name TEXT,invite_id TEXT,web_id TEXT,slide_key TEXT,aww_link TEXT,detail TEXT)')
+        c.execute('CREATE TABLE info(meet_name TEXT,invite_id TEXT,web_id TEXT,slide_key TEXT,aww_link TEXT,detail TEXT,slide_link TEXT)')
         c.execute('CREATE TABLE user_say(%s)'%(data))
         c.execute('CREATE TABLE vote_sort(sort INTEGER PRIMARY KEY AUTOINCREMENT,vote_id TEXT NOT NULL)')
-        c.execute('INSERT INTO info (meet_name,invite_id,web_id,slide_key,aww_link,detail) VALUES ("%s","%s","%s","%s","%s","%s")'%(meet_name,invite_id,web_id,slide_key,aww_link,detail))
+        c.execute('INSERT INTO info (meet_name,invite_id,web_id,slide_key,aww_link,detail,slide_link) VALUES ("%s","%s","%s","%s","%s","%s","%s")'%(meet_name,invite_id,web_id,slide_key,aww_link,detail,slide_link))
         conn.commit()
         conn.close()
     def get_aww_link():
@@ -298,12 +353,12 @@ def create_meet():
 
         slide_key=get_slide_link(slide_link)
         aww_link=get_aww_link()
-        meet_data(invite_id,web_id,slide_key,meet_name,aww_link,detail)
+        meet_data(invite_id,web_id,slide_key,meet_name,aww_link,detail,slide_link)
         line_bot_api.push_message(sent_id, TextSendMessage(text='已驗證成功~\n邀請碼是%s\n白板連結\nhttps://awwapp.com/b/%s'%(invite_id,aww_link)))
         conn.commit()
         conn.close()
 
-        ret={'invite_id':invite_id,"web_id":web_id,"slide_key":slide_key,"meet_name":meet_name,"aww_link":aww_link,'detail':detail}
+        ret={'invite_id':invite_id,"web_id":web_id,"slide_key":slide_key,"meet_name":meet_name,"aww_link":aww_link,'detail':detail,'slide_link':slide_link}
         return jsonify(ret)
     else:
         conn.commit()
@@ -313,23 +368,15 @@ def create_meet():
 
 @app.route('/meet_info', methods=['GET'])
 def meet_info():
-    def get_info(meet_id,what):
-        conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
-        c = conn.cursor()
-        info = c.execute('SELECT %s FROM info'%(what))
-        info = info.fetchall()[0][0]
-        conn.commit()
-        conn.close()
-        return info
-
     meet_id=request.args.get('meet_id')
     ret={}
-    ret['meet_name'] = get_info(meet_id,'meet_name') 
-    ret['invite_id'] = get_info(meet_id,'invite_id') 
-    ret['web_id'] = get_info(meet_id,'web_id') 
-    ret['slide_key'] = get_info(meet_id,'slide_key')
-    ret['aww_link'] = get_info(meet_id,'aww_link')
-    ret['detail'] = get_info(meet_id,'detail')
+    ret['meet_name'] = GET_INFO(meet_id,'meet_name') 
+    ret['invite_id'] = GET_INFO(meet_id,'invite_id') 
+    ret['web_id'] = GET_INFO(meet_id,'web_id') 
+    ret['slide_key'] = GET_INFO(meet_id,'slide_key')
+    ret['aww_link'] = GET_INFO(meet_id,'aww_link')
+    ret['detail'] = GET_INFO(meet_id,'detail')
+    ret['slide_link'] = GET_INFO(meet_id,'slide_link')
 
     return jsonify(ret)
     
@@ -508,5 +555,5 @@ def test():
     return 'ok'
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',port=80)
+    app.run()
 

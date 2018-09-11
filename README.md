@@ -8,9 +8,15 @@
  
  你是否在聽課程時，有想發表的問題，卻因旁人眼光，不敢發表
  
+ 你是否有很想在演講時，在簡報上進行繪畫講解，卻無奈於沒有良好工具可以應用
+ 
+ 當演講環節進入了Q&A的時間，你是否因為沒有辦法明確講到演講內容，而造成無效的溝通
+
+
+ 
  Line saying將提供你一個更方便直覺的方式，讓你可以輕易地傳達資訊，也可輕易的紀錄資訊
  
-簡報連結：[點此](https://www.slideshare.net/superj80820/line-hack-line-saying)
+### 簡報連結：[點此](https://docs.google.com/presentation/d/1a1oDFq3zbzOu7JsiKx0geYkDVER99aRc54ymFtZk0Nw/edit?usp=sharing)
 
 
 ## 使用系統
@@ -49,7 +55,7 @@
 
 ### 功能與流程(聽眾方)
 
-**透過演講代碼\Beacon即可加入此演講/會議/教學**
+**透過演講代碼/Beacon即可加入此演講/會議/教學**
 
 ![alt tag](https://i.imgur.com/VX7YBc7.jpg)
 

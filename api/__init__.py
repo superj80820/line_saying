@@ -90,14 +90,6 @@ def handle_message(event):
     elif re.match('[0-9]{5}$', event.message.text) != None:
         invite_id = re.match('[0-9]{5}$', event.message.text).group(0)
         
-
-        # conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
-        # c = conn.cursor()
-        # meet_id = c.execute('SELECT meet FROM user_in_where WHERE id ="%s"'%(user_id))
-        # meet_id = meet_id.fetchall()[0][0]
-        # conn.commit()
-        # conn.close()
-
         conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
         c = conn.cursor()
         api_request = c.execute('SELECT api_request FROM meet_check WHERE web_pass ="pass" AND invite_id ="%s"'%(invite_id))
@@ -112,30 +104,30 @@ def handle_message(event):
             detail = GET_INFO(api_request[0][0],'detail')
             image_map = {
                 "type": "imagemap",
-                "baseUrl": "https://i.imgur.com/zrRbpja.png",
+                "baseUrl": "https://i.imgur.com/pMccyul.png",
                 "altText": "This is an imagemap",
                 "baseSize": {
                     "width": 1040,
-                    "height": 112
+                    "height": 170
                     },
                 "actions": [
                     {
                     "type": "message",
                     "area": {
-                        "x": 0,
-                        "y": 0,
-                        "width": 527,
-                        "height": 112
+                        "x": 2,
+                        "y": 4,
+                        "width": 520,
+                        "height": 166
                     },
                     "text": "/public_yes"
                     },
                     {
                     "type": "message",
                     "area": {
-                        "x": 527,
-                        "y": 4,
-                        "width": 513,
-                        "height": 108
+                        "x": 522,
+                        "y": 0,
+                        "width": 518,
+                        "height": 170
                         },
                     "text": "/public_no"
                     }
@@ -182,6 +174,16 @@ def handle_message(event):
         conn.commit()
         conn.close()
 
+    elif event.message.text == "/ask":
+        line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text='請在訊息前加上? 直接傳送即可~'))
+
+    elif event.message.text == "/vote":
+        line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text='在演講方發起演講後 直接點選即可~'))
+        
     elif event.message.text[0] == '?' or event.message.text[0] == '？':
         say=event.message.text[1:len(event.message.text)]
 

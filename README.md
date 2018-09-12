@@ -15,7 +15,9 @@
 
  
  Line saying將提供你一個更方便直覺的方式，讓你可以輕易地傳達資訊，也可輕易的紀錄資訊
- 
+
+### 影片介紹：[點此](https://youtu.be/VYqmdTrTqfc)
+
 ### 簡報連結：[點此](https://docs.google.com/presentation/d/1a1oDFq3zbzOu7JsiKx0geYkDVER99aRc54ymFtZk0Nw/edit?usp=sharing)
 
 

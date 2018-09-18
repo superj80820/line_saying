@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>LINE-HACK2018</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="assets/css/main.css" />
+        <link rel="icon" href="images/logo.ico" type="image/x-icon" />
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    </head>
+    <body>
+		<div class="row">
+			<div>
+			<h2>Menu</h2>
+			<input type="text" id="mySearch" onkeyup="myFunction()" placeholder="Search.." title="Type in a category">
+				<ul id="myMenu">
+					<li><a href="#">HTML</a></li>
+					<li><a href="#">CSS</a></li>
+					<li><a href="#">JavaScript</a></li>
+					<li><a href="#">PHP</a></li>
+					<li><a href="#">Python</a></li>
+					<li><a href="#">jQuery</a></li>
+					<li><a href="#">SQL</a></li>
+					<li><a href="#">Bootstrap</a></li>
+					<li><a href="#">Node.js</a></li>
+				</ul>
+			</div>
+		</div>
+		<script>
+			function myFunction() {
+				var input, filter, ul, li, a, i;
+				input = document.getElementById("mySearch");
+				filter = input.value.toUpperCase();
+				ul = document.getElementById("myMenu");
+				li = ul.getElementsByTagName("li");
+				for (i = 0; i < li.length; i++) {
+					a = li[i].getElementsByTagName("a")[0];
+					if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+						li[i].style.display = "";
+					} else {
+						li[i].style.display = "none";
+					}
+				}
+			}
+		</script>
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/jquery.scrolly.min.js"></script>
+        <script src="assets/js/skel.min.js"></script>
+        <script src="assets/js/util.js"></script>
+        <script src="assets/js/main.js"></script>
+        <script src="assets/js/index.js"></script>
+        <script src="assets/js/jquery.cookie.js"></script>
+    </body>
+</html>

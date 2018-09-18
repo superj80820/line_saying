@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>LINE-HACK2018</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="icon" href="images/logo.ico" type="image/x-icon" />
+		<style type="text/css">
+			.loader {
+				position: fixed;
+				bottom: 50%;
+				left: 47.5%;
+				width: 200px;
+				border: 16px solid rgb(0,0,0,0);
+				border-radius: 50%;
+				border-top: 16px solid #3498db;
+				width: 100px;
+				height: 100px;
+				-webkit-animation: spin 2s linear infinite;
+				animation: spin 2s linear infinite;
+			}
+			@-webkit-keyframes spin {
+				0% { -webkit-transform: rotate(0deg); }
+				100% { -webkit-transform: rotate(360deg); }
+			}
+			@keyframes spin {
+				0% { transform: rotate(0deg); }
+				100% { transform: rotate(360deg); }
+			}
+		</style>
+	</head>
+	<body>
+		<!-- Main -->
+		<br /><br /><br /><br />
+		<div id=verify class="align-center">	
+			<h3>請輸入演講名稱</h3>
+				<center><input type=text id=MeetName name=MeetName style="height:40px;width:400px"></center><br />
+			<h3>請輸入演講細節</h3>
+				<center><input type=text id=MeetDetail name=MeetDetail style="height:40px;width:400px"></center><br />
+			<h3>請輸入驗證碼</h3>
+				<center><input type=text id=SentId name=SentId style="height:40px;width:400px"></center><br /><br />
+			<button style="position:relative; right:-122px;" class="button big alt scrolly" onclick="document.getElementById('id01').style.display='block'">請輸入簡報網頁</button>
+			<button style="position:relative; right:-122px;" class="button big alt scrolly">請上傳簡報檔案</button>
+				<form id="image_data" method="post" style="display:inline;">
+					<input id=sent_image name="image" type="File" class="button big alt scrolly" style="position:relative; right:117px; top:0px; width: 236px; opacity: 0;">
+				</form><br />
+				<div id="id01" style="display:none;">
+					<br /><center><input type=text id=SlideLink name=SlideLink style="height:40px;width:400px" class="center"></center>
+				</div><br />
+			<input type=button id=sent onclick='sent_id()' value=送出>
+			<div class="loader"></div>
+		</div>
+		<!-- Scripts -->
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/jquery.scrolly.min.js"></script>
+		<script src="assets/js/skel.min.js"></script>
+		<script src="assets/js/util.js"></script>
+		<script src="assets/js/main.js"></script>
+		<script src="assets/js/index.js"></script>
+		<script src="assets/js/jquery.cookie.js"></script>
+		<script>
+			var modala = document.getElementById('id01');
+			window.onclick = function(event) {
+				if (event.target == modala) {
+					modala.style.display = "none";
+				}
+			}
+		</script>
+	</body>
+</html>

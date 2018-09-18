@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+		<script>
+			if ("Notification" in window)
+			{
+				let ask = Notification.requestPermission();
+				ask.then(permission => {
+					if(permission == "granted")
+					{
+						let msg = new Notification("推播主旨", {
+							body: "推播測試",
+							icon: "http://180.176.8.137:8080/neit_official/Content/images/1.png"
+						});
+						msg.addEventListener("click", event=> {
+							alert("點擊接受");
+						});
+					}
+				});
+			}
+		</script>
+    </head>
+	<body
+    </body>
+</html>

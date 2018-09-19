@@ -205,6 +205,30 @@ def handle_message(event):
         line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text='收到留言!!\n如果要附加圖片~請直接傳圖喔'))
+    
+    elif re.search('/\d{10}\.',event.message.text) != None:
+        message_timestamp = re.search('/[0-9]+.[0-9]+',event.message.text).group(0)
+        message_timestamp = message_timestamp[1:len(message_timestamp)]
+        meet_id = USER_GET_MEET_ID(event.source.user_id)
+        group_is_what = event.message.text[len(event.message.text)-1:len(event.message.text)]
+
+        conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
+        c = conn.cursor()
+        say=c.execute('SELECT say FROM speech_say WHERE timestamp ="%s"'%(message_timestamp)).fetchall()[0][0]
+        type_is_what=c.execute('SELECT type FROM speech_say WHERE timestamp ="%s"'%(message_timestamp)).fetchall()[0][0]
+        try:
+            c.execute('INSERT INTO user_note (note,timestamp,type,id,group_id) VALUES ("%s","%s","%s","%s","%s")'%(say,message_timestamp,type_is_what,event.source.user_id,group_is_what))
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text='已將筆記存好啦~!!'))
+        except sqlite.Error as e1:
+            c.execute('UPDATE user_note SET group_id ="%s" WHERE timestamp ="%s"'%(group_is_what,message_timestamp))
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text='已改變筆記分類囉~!!'))
+            print(e1)
+        conn.commit()
+        conn.close()
 
     elif event.message.text=='test':
         print(type(event.timestamp))
@@ -290,11 +314,18 @@ def handle_postback(event):
 @app.route('/create_meet', methods=['POST'])
 def create_meet():
     def meet_data(invite_id,web_id,slide_key,meet_name,aww_link,detail,slide_link):
+        '''
+        分類group_id 目前是1筆記,2文章,3佳句,4公式
+        '''
         conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,web_id))
         c = conn.cursor()
-        data = 'name TEXT,id TEXT,say TEXT,timestamp TEXT,image TEXT'
+        user_data = 'name TEXT,id TEXT,say TEXT,timestamp TEXT,image TEXT'
+        speech_data = 'say TEXT,timestamp TEXT,type TEXT'
+        user_note_data = 'note TEXT,timestamp TEXT UNIQUE,type TEXT,id TEXT,group_id TEXT'
         c.execute('CREATE TABLE info(meet_name TEXT,invite_id TEXT,web_id TEXT,slide_key TEXT,aww_link TEXT,detail TEXT,slide_link TEXT)')
-        c.execute('CREATE TABLE user_say(%s)'%(data))
+        c.execute('CREATE TABLE user_say(%s)'%(user_data))
+        c.execute('CREATE TABLE speech_say(%s)'%(speech_data))
+        c.execute('CREATE TABLE user_note(%s)'%(user_note_data))
         c.execute('CREATE TABLE vote_sort(sort INTEGER PRIMARY KEY AUTOINCREMENT,vote_id TEXT NOT NULL)')
         c.execute('INSERT INTO info (meet_name,invite_id,web_id,slide_key,aww_link,detail,slide_link) VALUES ("%s","%s","%s","%s","%s","%s","%s")'%(meet_name,invite_id,web_id,slide_key,aww_link,detail,slide_link))
         conn.commit()
@@ -318,7 +349,7 @@ def create_meet():
             print(str(re.search('%2Fb%2F.+%2F',html_res)))
             if re.search('%2Fb%2F.+%2F',html_res):
                 aww_link = re.search('%2Fb%2F.+%2F',html_res).group(0)
-                aww_link = aww_link[7:16]
+                aww----_link = aww_link[7:16]
                 break
             time.sleep(1)
         driver.close()
@@ -382,7 +413,6 @@ def meet_info():
 
     return jsonify(ret)
     
-
 @app.route('/vote', methods=['POST'])
 def post_vote():
     meet_id=request.get_json()['meet_id']
@@ -427,6 +457,62 @@ def post_vote():
 
 @app.route('/say', methods=['POST'])
 def say():
+    def save_note_imagemap(timestamp,type_is_what):
+        ret = {
+            "type": "imagemap",
+            "baseUrl": "https://i.imgur.com/6IKWQFd.png",
+            "altText": "This is an imagemap",
+            "baseSize": 
+            {
+                "width": 1040,
+                "height": 170
+            },
+            "actions":
+            [
+                {
+                "type": "message",
+                "area": {
+                    "x": 0,
+                    "y": 0,
+                    "width": 265,
+                    "height": 170
+                },
+                "text": "/%s_%s_1"%(timestamp,type_is_what)
+                },
+                {
+                "type": "message",
+                "area": {
+                    "x": 265,
+                    "y": 2,
+                    "width": 256,
+                    "height": 168
+                },
+                "text": "/%s_%s_2"%(timestamp,type_is_what)
+                },
+                {
+                "type": "message",
+                "area": {
+                    "x": 521,
+                    "y": 0,
+                    "width": 256,
+                    "height": 170
+                },
+                "text": "/%s_%s_3"%(timestamp,type_is_what)
+                },
+                {
+                "type": "message",
+                "area": {
+                    "x": 777,
+                    "y": 0,
+                    "width": 263,
+                    "height": 170
+                },
+                "text": "/%s_%s_4"%(timestamp,type_is_what)
+                }
+            ]
+        }
+        return ret
+
     if '' == request.form['say']:
         say = None
     else:
@@ -436,18 +522,25 @@ def say():
     else:
         image = request.files['image']
     meet_id = request.form['meet_id']
-    timestamp = str(int(time.time()))
     messages = []
     
+    conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
+    c = conn.cursor()
     if image != None:
+        timestamp_image = str(time.time())
         print('add image')
-        image.save('%sdata/image/speech/%s.jpg'%(FileRout,timestamp))
-        image_url = 'https://messfar.com/line_saying_data/speech/%s.jpg'%(timestamp)
-        messages += [{"type": "image","originalContentUrl": "%s"%(image_url),"previewImageUrl": "%s"%(image_url)}]
+        image.save('%sdata/image/speech/%s.jpg'%(FileRout,timestamp_image))
+        image_url = 'https://messfar.com/line_saying_data/speech/%s.jpg'%(timestamp_image)
+        messages += [{"type": "image","originalContentUrl": "%s"%(image_url),"previewImageUrl": "%s"%(image_url)},save_note_imagemap(timestamp_image,'image')]
+        c.execute('INSERT INTO speech_say (say,timestamp,type) VALUES ("%s","%s","%s")'%(image_url,timestamp_image,'image'))
     if say != None:
+        timestamp_text = str(time.time())
         print("add say")
-        messages += [{"type":"text","text":"%s"%(say)}]
-    
+        messages += [{"type":"text","text":"%s"%(say)},save_note_imagemap(timestamp_text,'text')]
+        c.execute('INSERT INTO speech_say (say,timestamp,type) VALUES ("%s","%s","%s")'%(say,timestamp_text,'text'))
+    conn.commit()
+    conn.close()
+
     print(messages)
     if messages != []:
         conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))

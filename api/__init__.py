@@ -363,7 +363,7 @@ def create_meet():
             "secret":"5de8ee4f-db69-4c61-8375-b36222ff4db8",
             "domain":"https://awwapp.com//b/sezdetukm"
         }
-        result = session_requests.post(url,data=data)
+        result = requests.post(url,data=data)
         aww_link = result.json()['board']['boardLink'])
         return aww_link
     

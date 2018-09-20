@@ -12,6 +12,7 @@ $(document).ready(function() {
     console.log(invite_id);
     console.log(slide_key);
 
+    document.title=meet_name+"-觀眾頁";
     $(WebId).text(invite_id);
     document.getElementById("AwwLink").src="https://awwapp.com/b/"+aww_link+"/";
 

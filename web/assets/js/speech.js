@@ -56,11 +56,13 @@ $(document).ready(function() {
     console.log(slide_key);
     console.log(aww_link);
 
+    document.title=meet_name+"-講師頁";
     document.getElementById("title").innerHTML=meet_name;
     document.getElementById("title2").innerHTML=meet_detail;
     document.getElementById("AwwLink").src="https://awwapp.com/b/"+aww_link+"/";
     document.getElementById("IframeSlide").src="https://www.slideshare.net/slideshow/embed_code/key/"+slide_key;
     $(WebId).text(invite_id);
+
     // document.getElementById("title").text='meet_name';
     // $(title).text(meet_name)
     // $(title2).text(detail)

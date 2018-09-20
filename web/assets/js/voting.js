@@ -5,6 +5,7 @@ $(document).ready(function() {
   var invite_id=$.cookie("InviteId");
   var slide_key=$.cookie("SlideKey");
 
+  document.title=meet_name+"-投票頁";
   var $ul = $("ul[class='va']");
   var a,a1,a2;
   var flag=false;

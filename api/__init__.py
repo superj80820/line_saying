@@ -357,8 +357,16 @@ def create_meet():
 	return aww_link
         '''
         #由於selenium實在是無法在apache開起來 只好再開一台虛擬機當作api
-        aww_link = requests.get("http://104.198.88.24/get_aww_link").text
+        #沒關係 有我(request)
+        url = 'https://awwapp.com/api/v2/admin/boards/create'
+        data={
+            "secret":"5de8ee4f-db69-4c61-8375-b36222ff4db8",
+            "domain":"https://awwapp.com//b/sezdetukm"
+        }
+        result = session_requests.post(url,data=data)
+        aww_link = result.json()['board']['boardLink'])
         return aww_link
+    
     def get_slide_link(slide_link):
         res = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json'%(slide_link))
         res = json.loads(res.text)

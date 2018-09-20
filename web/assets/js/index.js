@@ -28,6 +28,7 @@ function sent_id() {
 		success: function(test_res) {  
 			if (test_res == "create fail"){
 				alert("創建失敗啊!~")
+				div1.style.display='none';
 			}
 			else{
 				console.log(test_res)
@@ -43,8 +44,11 @@ function sent_id() {
 		},
 		error: function(test_res){
 			alert("創建失敗啊!~")
+			div1.style.display='none';
 		}
 	}); 
+
+	div1.style.display='';
 }
 
 function getid(){

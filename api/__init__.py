@@ -354,7 +354,7 @@ def create_meet():
             time.sleep(1)
         driver.close()
         driver.quit()
-	return aww_link
+	    return aww_link
         '''
         #由於selenium實在是無法在apache開起來 只好再開一台虛擬機當作api
         #沒關係 有我(request)
@@ -364,7 +364,7 @@ def create_meet():
             "domain":"https://awwapp.com//b/sezdetukm"
         }
         result = requests.post(url,data=data)
-        aww_link = result.json()['board']['boardLink'])
+        aww_link = result.json()['board']['boardLink']
         return aww_link
     
     def get_slide_link(slide_link):

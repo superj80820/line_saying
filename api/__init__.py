@@ -46,6 +46,15 @@ def USER_GET_MEET_ID(user_id):
     conn.close()
     return meet_id
 
+def INVITE_ID_GET_MEET_ID(invite_id):
+    conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
+    c = conn.cursor()
+    meet_id = c.execute('SELECT api_request FROM meet_check WHERE invite_id ="%s"'%(invite_id))
+    meet_id = meet_id.fetchall()[0][0]
+    conn.commit()
+    conn.close()
+    return meet_id
+
 def GET_INFO(meet_id,what):
     conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
     c = conn.cursor()
@@ -141,6 +150,13 @@ def handle_message(event):
                 {"type":"text","text":"請問你要匿名還是公開姓名呢?"},image_map]
                 }
             res=requests.post('https://api.line.me/v2/bot/message/reply',headers=headers,json=payload)
+
+            check_history = c.execute('SELECT invite_id FROM user_history WHERE id ="%s" AND invite_id ="%s"'%(event.source.user_id,invite_id))
+            check_history = check_history.fetchall()
+            print(check_history)
+            if check_history == []:
+                c.execute('INSERT INTO user_history (id,invite_id,timestamp,meet_name,detail) VALUES ("%s","%s","%s","%s","%s")'%(event.source.user_id,invite_id,str(time.time()),meet_name,detail))
+
         else:
             line_bot_api.reply_message(
                 event.reply_token,
@@ -229,6 +245,11 @@ def handle_message(event):
             print(e1)
         conn.commit()
         conn.close()
+    
+    elif event.message.text == "/all_note":
+        line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text='https://messfar.com/line_saying/all_note?user_id=%s'%(event.source.user_id)))
 
     elif event.message.text=='test':
         print(type(event.timestamp))
@@ -238,7 +259,28 @@ def handle_message(event):
         headers = {'Content-Type':'application/json','Authorization':'Bearer %s'%(line_token)}
         payload = {
             'replyToken':event.reply_token,
-            'messages':[{"type":"text","text":"May I help you?"}]
+            'messages':[{
+                "type": "template",
+                "altText": "this is a buttons template",
+                "template": {
+                    "type": "buttons",
+                    "actions": [
+                    {
+                        "type": "uri",
+                        "label": "動作 1",
+                        "uri": "line://msg/text/?asfd"
+                    },
+                    {
+                        "type": "message",
+                        "label": "動作 2",
+                        "text": "動作 2"
+                    }
+                    ],
+                    "thumbnailImageUrl": "https://i.imgur.com/lSUSmnQ.png",
+                    "title": "標題",
+                    "text": "文字"
+                }
+                }]
             }
         res=requests.post('https://api.line.me/v2/bot/message/reply',headers=headers,json=payload)
         # line_bot_api.reply_message(
@@ -610,6 +652,33 @@ def user_say():
     conn.commit()  
     conn.close()
  
+    return jsonify(ret)
+
+@app.route('/user_note_all', methods=['GET'])
+def user_note_all():
+    user_id=request.args.get('user_id')
+    
+    conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
+    df = pandas.read_sql_query("SELECT * FROM user_history WHERE id ='%s'"%(user_id), conn)
+    ret = df.to_dict(orient='records')
+    conn.commit()  
+    conn.close()
+
+    return jsonify(ret)
+
+@app.route('/user_note', methods=['GET'])
+def user_note():
+    invite_id=request.args.get('invite_id')
+    user_id=request.args.get('user_id')
+
+    meet_id=INVITE_ID_GET_MEET_ID(invite_id)
+    
+    conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
+    df = pandas.read_sql_query("SELECT * FROM user_note WHERE id ='%s'"%(user_id), conn)
+    ret = df.to_dict(orient='records')
+    conn.commit()  
+    conn.close()
+
     return jsonify(ret)
 
 @app.route('/vote', methods=['GET'])

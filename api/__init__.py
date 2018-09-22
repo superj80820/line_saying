@@ -670,14 +670,26 @@ def user_note_all():
 def user_note():
     invite_id=request.args.get('invite_id')
     user_id=request.args.get('user_id')
+    ret={}
 
     meet_id=INVITE_ID_GET_MEET_ID(invite_id)
     
     conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
-    df = pandas.read_sql_query("SELECT * FROM user_note WHERE id ='%s'"%(user_id), conn)
-    ret = df.to_dict(orient='records')
+    df1 = pandas.read_sql_query("SELECT * FROM user_note WHERE id ='%s' AND group_id ='1'"%(user_id), conn)
+    df1 = df1.to_dict(orient='records')
+    df2 = pandas.read_sql_query("SELECT * FROM user_note WHERE id ='%s' AND group_id ='2'"%(user_id), conn)
+    df2 = df2.to_dict(orient='records')
+    df3 = pandas.read_sql_query("SELECT * FROM user_note WHERE id ='%s' AND group_id ='3'"%(user_id), conn)
+    df3 = df3.to_dict(orient='records')
+    df4 = pandas.read_sql_query("SELECT * FROM user_note WHERE id ='%s' AND group_id ='4'"%(user_id), conn)
+    df4 = df4.to_dict(orient='records')
     conn.commit()  
     conn.close()
+    
+    ret['group_1']=df1
+    ret['group_2']=df2
+    ret['group_3']=df3
+    ret['group_4']=df4
 
     return jsonify(ret)
 

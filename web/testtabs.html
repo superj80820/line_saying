@@ -40,7 +40,40 @@
         color: white;
       }
       /* Style the tab content */
-      .tabcontent {
+      .tab1content {
+        padding: 16px;
+        margin-top: 30px;
+        height: 100%;
+        background: #263449;
+        color: white;
+        display: none;
+        border: 1px solid #ccc;
+        border-top: none;
+      }
+      /* Style the tab content */
+      .tab2content {
+        padding: 16px;
+        margin-top: 30px;
+        height: 100%;
+        background: #263449;
+        color: white;
+        display: none;
+        border: 1px solid #ccc;
+        border-top: none;
+      }
+      /* Style the tab content */
+      .tab3content {
+        padding: 16px;
+        margin-top: 30px;
+        height: 100%;
+        background: #263449;
+        color: white;
+        display: none;
+        border: 1px solid #ccc;
+        border-top: none;
+      }
+      /* Style the tab content */
+      .tab4content {
         padding: 16px;
         margin-top: 30px;
         height: 100%;
@@ -59,17 +92,23 @@
       <button class="tablinks" onclick="openCity(event, 'three')"><b>佳句</b></button>
       <button class="tablinks" onclick="openCity(event, 'four')"><b>公式</b></button>
     </div>
-    <div id="one" class="tabcontent"><h6 style="position: relative;top:30px;">22:30</h6><h3>功能1</h3><h6 style="position: relative;top:30px;">22:30</h6><h3>功能1</h3></div>
-    <div id="two" class="tabcontent"><h3>功能2</h3></div>
-    <div id="three" class="tabcontent"><h3>功能3</h3></div>
-    <div id="four" class="tabcontent"><h3>功能4</h3></div>
+    
+    <div id="one" class="tab1content"></div>
+    <div id="two" class="tab2content"></div>
+    <div id="three" class="tab3content"></div>
+    <div id="four" class="tab4content"></div>
     <script>
       function openCity(evt, cityName) {
         var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-          tabcontent[i].style.display = "none";
-        }
+        var tab1content,tab2content,tab3content,tab4content;
+        tab1content = document.getElementById("one");
+        tab2content = document.getElementById("two");
+        tab3content = document.getElementById("three");
+        tab4content = document.getElementById("four");
+        tab1content.style.display = "none";
+        tab2content.style.display = "none";
+        tab3content.style.display = "none";
+        tab4content.style.display = "none";
         tablinks = document.getElementsByClassName("tablinks");
         for (i = 0; i < tablinks.length; i++) {
           tablinks[i].className = tablinks[i].className.replace(" active", "");
@@ -80,5 +119,14 @@
       // Get the element with id="defaultOpen" and click on it
       document.getElementById("defaultOpen").click();
     </script>
+    <!-- Scripts -->
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/jquery.scrolly.min.js"></script>
+		<script src="assets/js/skel.min.js"></script>
+		<script src="assets/js/util.js"></script>
+		<script src="assets/js/main.js"></script>
+    <script src="assets/js/jquery.cookie.js"></script>
+    <script src="assets/js/testtab.js"></script>
+		<script src="assets/js/lib.js"></script>
   </body>
 </html>

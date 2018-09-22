@@ -27,7 +27,7 @@ $(document).ready(function() {
           $('#allvote').hide();
         }
         for (i=1;i<=n;i++){
-          item = '<h3>'+test_dic[i-1].vote_name+'<b style=font-size:15px>&emsp;<span id=person'+i+'></span>&nbsp&nbsp投票&nbsp&nbsp&nbsp&nbsp<input type=button id=sAdd value=Add></b></h3><span id=T'+i+'_option0></span></div><div><span id=T'+i+'_option1></span></div><div><span id=T'+i+'_option2></span>';
+          item = '<h3>'+test_dic[i-1].vote_name+'<b style=font-size:15px>&emsp;<span id=person'+i+'></span>&nbsp&nbsp投票&nbsp&nbsp&nbsp&nbsp<input type=button id=sAdd value=Add></b></h3><span id=T'+i+'_option0></span></div><div><span id=T'+i+'_option1></span></div><div><span id=T'+i+'_option2></span><br /><br />';
           console.log(item)
           // '<span id=T'+i+'_option1></span></div><div><span id=T'+i+'_option2></span><span id=T'+i+'_option3></span>'
           $ul.append(item);

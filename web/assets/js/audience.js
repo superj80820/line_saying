@@ -21,31 +21,43 @@ $(document).ready(function() {
       url: 'https://9e7ce3e2.ngrok.io/user_say?meet_id='+sent_id,
       dataType: 'json',
         success: function(test_dic) {
-            var item1 ="<tbody>"
-            var i;
-            // var s="";
-            test_j = test_dic
-            n = test_j.length
-            var item = '<table><thead><tr><th>觀眾姓名</th><th>附加圖片</th><th>問題</th><th>留言時間</th></tr></thead>';
-            for (i=0;i<n;i++){
-              $.cookie("ButtonImage_"+i,test_j[i].image);
-              // alert("網址 為: " + test_j[i].image);
-              // var s2 = test_j[i].time.substring(0,10);
-              // var s3 = test_j[i].time.substring(11,19);
-              var name = test_j[i].name;
-              var time = test_j[i].timestamp;
-              var id = test_j[i].name;
-              if (test_j[i].image=='null' || test_j[i].image==null){
-                image='<input type=button onclick="show_image(this)" id="ButtonImage_'+i+'" value="無">'  
-              }else{
-                image='<input type=button onclick="show_image(this)" id="ButtonImage_'+i+'" value="顯示">'
-              }
-              
-              item1 += '<tr><td>'+name+'</td><td>'+image+'</td><td>'+test_j[i].say+'</td><td>'+time+'</td></tr>';
-              // var name = getName(id,i);
+          var item1 ="<tbody>"
+          var i;
+          // var s="";
+          test_j = test_dic
+          n = test_j.length
+          var item = '<table><thead><tr><th>觀眾姓名</th><th>附加圖片</th><th>問題</th><th>留言時間</th></tr></thead>';
+          for (i=0;i<n;i++){
+            $.cookie("ButtonImage_"+i,test_j[i].image);
+            // alert("網址 為: " + test_j[i].image);
+            // var s2 = test_j[i].time.substring(0,10);
+            // var s3 = test_j[i].time.substring(11,19);
+            var name = test_j[i].name;
+            var time = test_j[i].timestamp;
+            var id = test_j[i].name;
+            if (test_j[i].image=='null' || test_j[i].image==null){
+              image='<input type=button onclick="show_image(this)" id="ButtonImage_'+i+'" value="無">'  
+            }else{
+              image='<input type=button onclick="show_image(this)" id="ButtonImage_'+i+'" value="顯示">'
             }
-            var item2 = '</tbody></table>';
-            $ulT.append(item+item1+item2);
+            item1 += '<tr><td>'+name+'</td><td>'+image+'</td><td>'+test_j[i].say+'</td><td>'+time+'</td></tr>';
+            // var name = getName(id,i);
+          }
+          var item2 = '</tbody></table>';
+          $ulT.append(item+item1+item2);
+          
+          // message   
+          if ("Notification" in window){
+            let ask = Notification.requestPermission();
+            ask.then(permission => {
+              if(permission == "granted"){
+                let msg = new Notification(name, {
+                  body: test_j[0].say,
+                  icon: href="images/logo.jpg"
+                });
+              }
+            });
+          }
         }
     }); 
     // function getName(id,i){
@@ -84,7 +96,7 @@ $(document).ready(function() {
      });
 
 
-     $("button").click(function(){
+    $("button").click(function(){
       $("p").toggle();
     });
   });

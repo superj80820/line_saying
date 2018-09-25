@@ -18,7 +18,7 @@ $(document).ready(function() {
 
     $.ajax({
       type: 'GET',
-      url: 'https://9e7ce3e2.ngrok.io/user_say?meet_id='+sent_id,
+      url: 'https://messfar.com/line_saying_api/user_say?meet_id='+sent_id,
       dataType: 'json',
         success: function(test_dic) {
           var item1 ="<tbody>"

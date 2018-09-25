@@ -8,7 +8,7 @@ function say_something(){
         formData.append('meet_id', sent_id);
         $.ajax({
             type:'POST',
-            url: "https://9e7ce3e2.ngrok.io/say",
+            url: "https://messfar.com/line_saying_api/say",
             data:formData,
             cache:false,
             contentType: false,

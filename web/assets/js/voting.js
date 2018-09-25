@@ -14,7 +14,7 @@ $(document).ready(function() {
   var n;
   $.ajax({
     type: 'GET',
-    url: 'https://9e7ce3e2.ngrok.io/vote?meet_id='+sent_id,
+    url: 'https://messfar.com/line_saying_api/vote?meet_id='+sent_id,
     dataType: 'json',
       success: function(test_dic) {
         var i;
@@ -134,7 +134,7 @@ $(document).ready(function() {
     
     $.ajax({
       type: 'POST',
-      url: 'https://9e7ce3e2.ngrok.io/vote',
+      url: 'https://messfar.com/line_saying_api/vote',
       contentType: "application/json; charset=utf-8",
       dataType: 'json',
       data: JSON.stringify({

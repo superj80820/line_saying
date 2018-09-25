@@ -16,7 +16,7 @@ function sent_id() {
 	
 	$.ajax({
 		type: 'POST',
-		url: 'https://9e7ce3e2.ngrok.io/create_meet',
+		url: 'https://messfar.com/line_saying_api/create_meet',
 		contentType: "application/json; charset=utf-8",
 		dataType: 'json',
 		data: JSON.stringify({

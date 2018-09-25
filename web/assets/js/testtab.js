@@ -10,7 +10,7 @@ $(document).ready(function() {
   
   $.ajax({
     type: 'GET',
-    url: 'https://9e7ce3e2.ngrok.io/user_note?user_id='+user_id+'&invite_id='+invite_id,
+    url: 'https://messfar.com/line_saying_api/user_note?user_id='+user_id+'&invite_id='+invite_id,
     dataType: 'json',
       success: function(test_dic) {
           console.log(test_dic)

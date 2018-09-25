@@ -69,7 +69,7 @@ $(document).ready(function() {
 
     $.ajax({
         type: 'GET',
-        url: 'https://9e7ce3e2.ngrok.io/meet_info?meet_id='+sent_id,
+        url: 'https://messfar.com/line_saying_api/meet_info?meet_id='+sent_id,
         dataType: 'json',
         success: function(test_dic) {
             test_j = test_dic
@@ -90,7 +90,7 @@ $(document).ready(function() {
     $(document).on('click', '#send1', function() {
         $.ajax({
             type: 'POST',
-            url: 'https://9e7ce3e2.ngrok.io/say',
+            url: 'https://messfar.com/line_saying_api/say',
             contentType: "application/json; charset=utf-8",
             dataType: 'json',
             data: JSON.stringify({
@@ -111,7 +111,7 @@ $(document).ready(function() {
         formData.append('meet_id', sent_id);
         $.ajax({
             type:'POST',
-            url: "https://9e7ce3e2.ngrok.io/sent_image",
+            url: "https://messfar.com/line_saying_api/sent_image",
             data:formData,
             cache:false,
             contentType: false,

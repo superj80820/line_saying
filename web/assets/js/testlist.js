@@ -5,7 +5,7 @@ $(document).ready(function() {
 
     $.ajax({
       type: 'GET',
-      url: 'https://9e7ce3e2.ngrok.io/user_note_all?user_id='+user_id,
+      url: 'https://messfar.com/line_saying_api/user_note_all?user_id='+user_id,
       dataType: 'json',
         success: function(test_dic) {
             console.log(test_dic)

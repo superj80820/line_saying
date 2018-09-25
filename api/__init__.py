@@ -147,7 +147,7 @@ def handle_message(event):
             payload = {
                 'replyToken':event.reply_token,
                 'messages':[{"type":"text","text":"歡迎加入meeting~\n演講名稱：%s\n演講細節：%s\n簡報連結：%s"%(meet_name,detail,slide_link)},
-                {"type":"text","text":"請問你要匿名還是公開姓名呢?"},image_map]
+                {"type":"text","text":"你可以由此發送問題給演講者，請問你是否願意公開你的姓名?"},image_map]
                 }
             res=requests.post('https://api.line.me/v2/bot/message/reply',headers=headers,json=payload)
 
@@ -160,7 +160,7 @@ def handle_message(event):
         else:
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text='目前沒有這個meeting壓...'))
+                TextSendMessage(text='沒有這個meeting呀~\n確定後再輸入一次吧!'))
         conn.commit()
         conn.close()
     
@@ -173,7 +173,7 @@ def handle_message(event):
         c.execute('UPDATE user_in_where SET user_name ="%s" WHERE id ="%s"'%(user_name,event.source.user_id))
         line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text='已公開~'))
+                TextSendMessage(text='被公開啦~'))
         conn.commit()
         conn.close()
 
@@ -186,19 +186,20 @@ def handle_message(event):
         c.execute('UPDATE user_in_where SET user_name ="%s" WHERE id ="%s"'%(user_name,event.source.user_id))
         line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text='好~以匿名~'))
+                TextSendMessage(text='被匿名啦~'))
         conn.commit()
         conn.close()
 
-    elif event.message.text == "/ask":
+    elif event.message.text == "/manual":
         line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text='請在訊息前加上? 直接傳送即可~'))
+                TextSendMessage(text='演講者功能\n想要發送資料\n可透過網站上方的固定列，輸入訊息或選擇圖檔發送至Line Bot\n想要繪畫講解\n可透過網站講師頁與觀眾頁的白板進行講解，也可以透過Line Bot的連結與網站的白板同步\n想要開起投票\n可透過網站投票頁，新增投票主題與選項，並即時查看票數\n\n聽眾功能\n想要記錄資訊\n在演講者發送訊息或圖檔後，可直接點選訊息下方的分類進行記錄\n想要提問問題\n在問題內容的前方加上"?"符號，半形全形即可，演講者可透過網站觀眾頁查看聽眾問題\n想要分享圖檔\需先在Line Bot提問問題，在選擇圖檔進行上傳，演講者可透過網站觀眾頁查看聽眾圖檔請在訊息前加上? 直接傳送即可~'))
 
-    elif event.message.text == "/vote":
+    elif event.message.text == "/note_all":
+        ret = 'https://messfar.com/line_saying/notelist.html?user_id=%s'%(event.source.user_id)
         line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text='在演講方發起演講後 直接點選即可~'))
+                TextSendMessage(text=ret))
         
     elif event.message.text[0] == '?' or event.message.text[0] == '？':
         say=event.message.text[1:len(event.message.text)]

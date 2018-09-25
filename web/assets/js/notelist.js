@@ -25,7 +25,7 @@ $(document).ready(function() {
               var detail = test_j[i].detail;
               var invite_id = test_j[i].invite_id;
               
-              item1 += '<tr><td>'+'<a href="testtabs.html?user_id='+user_id+'&invite_id='+invite_id+'">'+name+'</a>'+'</td><td>'+detail+'</td><td>'+time+'</td></tr>';
+              item1 += '<tr><td>'+'<a href="note.html?user_id='+user_id+'&invite_id='+invite_id+'">'+name+'</a>'+'</td><td>'+detail+'</td><td>'+time+'</td></tr>';
               // var name = getName(id,i);
             }
             var item2 = '</tbody></table>';

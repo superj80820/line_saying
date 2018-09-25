@@ -48,8 +48,8 @@ function check_type(Say,ImageName){
 function timestamp_to_date(timestamp){
     time = timestamp.split(".")[0];
     time = parseInt(time);
-    time_date = new Date(time).getDate();
-    time_month = new Date(time).getMonth();
+    time_date = new Date(time*1000).getDate();
+    time_month = new Date(time*1000).getMonth();
     time_month = parseInt(time_month)+1;
     time = time_month+'/'+time_date;
     return time
@@ -58,8 +58,8 @@ function timestamp_to_date(timestamp){
 function timestamp_to_hour(timestamp){
     time = timestamp.split(".")[0];
     time = parseInt(time);
-    time_hours = new Date(time).getHours();
-    time_minutes = new Date(time).getMinutes();
+    time_hours = new Date(time*1000).getHours();
+    time_minutes = new Date(time*1000).getMinutes();
     time = time_hours+'時'+time_minutes+'分';
     return time
 }

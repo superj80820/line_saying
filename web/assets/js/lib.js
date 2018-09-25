@@ -46,7 +46,6 @@ function check_type(Say,ImageName){
 }
 
 function timestamp_to_date(timestamp){
-    timestamp
     time = timestamp.split(".")[0];
     time = parseInt(time);
     time_date = new Date(time).getDate();
@@ -57,7 +56,6 @@ function timestamp_to_date(timestamp){
 }
 
 function timestamp_to_hour(timestamp){
-    timestamp
     time = timestamp.split(".")[0];
     time = parseInt(time);
     time_hours = new Date(time).getHours();

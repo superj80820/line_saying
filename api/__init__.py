@@ -193,7 +193,7 @@ def handle_message(event):
     elif event.message.text == "/manual":
         line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text='演講者功能\n想要發送資料\n可透過網站上方的固定列，輸入訊息或選擇圖檔發送至Line Bot\n想要繪畫講解\n可透過網站講師頁與觀眾頁的白板進行講解，也可以透過Line Bot的連結與網站的白板同步\n想要開起投票\n可透過網站投票頁，新增投票主題與選項，並即時查看票數\n\n聽眾功能\n想要記錄資訊\n在演講者發送訊息或圖檔後，可直接點選訊息下方的分類進行記錄\n想要提問問題\n在問題內容的前方加上"?"符號，半形全形即可，演講者可透過網站觀眾頁查看聽眾問題\n想要分享圖檔\需先在Line Bot提問問題，在選擇圖檔進行上傳，演講者可透過網站觀眾頁查看聽眾圖檔請在訊息前加上? 直接傳送即可~'))
+                TextSendMessage(text='演講者功能\n想要發送資料\n可透過網站上方的固定列，輸入訊息或選擇圖檔發送至Line Bot\n\n想要繪畫講解\n可透過網站講師頁與觀眾頁的白板進行講解，也可以透過Line Bot的連結與網站的白板同步\n\n想要開起投票\n可透過網站投票頁，新增投票主題與選項，並即時查看票數\n\n\n聽眾功能\n想要記錄資訊\n在演講者發送訊息或圖檔後，可直接點選訊息下方的分類進行記錄\n\n想要提問問題\n在問題內容的前方加上"?"符號，半形全形即可，演講者可透過網站觀眾頁查看聽眾問題\n\n想要分享圖檔\需先在Line Bot提問問題，在選擇圖檔進行上傳，演講者可透過網站觀眾頁查看聽眾圖檔請在訊息前加上? 直接傳送即可~'))
 
     elif event.message.text == "/note_all":
         ret = 'https://messfar.com/line_saying/notelist.html?user_id=%s'%(event.source.user_id)
@@ -221,7 +221,7 @@ def handle_message(event):
         conn.close()
         line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text='收到留言!!\n如果要附加圖片~請直接傳圖喔'))
+                TextSendMessage(text='已成功收到你的留言!!\n如果需要附加圖片~\n請直接選擇圖擋上傳~'))
     
     elif re.search('/\d{10}\.',event.message.text) != None:
         message_timestamp = re.search('/[0-9]+.[0-9]+',event.message.text).group(0)
@@ -304,7 +304,7 @@ def handle_content_message(event):
     conn.close()
     line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text='收到圖片!!如果圖片要更換\n再傳一張就會覆蓋囉~'))
+            TextSendMessage(text='已成功收到你的圖檔!!\n如果需要更換圖片\n再傳一張就會覆蓋囉~'))
 
 @handler.add(PostbackEvent)
 def handle_postback(event):
@@ -349,10 +349,10 @@ def handle_postback(event):
             conn.close()
 
             line_bot_api.reply_message(
-                event.reply_token, TextSendMessage(text='感謝你對\n%s\n投下寶貴的一票~'%(vote_dict['label'])))
+                event.reply_token, TextSendMessage(text='感謝你對\n%s\n投下了寶貴的一票~'%(vote_dict['label'])))
         else:
             line_bot_api.reply_message(
-                event.reply_token, TextSendMessage(text='你已經投票了呀呀呀!'))
+                event.reply_token, TextSendMessage(text='非常抱歉!!\n您已經投過票了呦~'))
             
 @app.route('/create_meet', methods=['POST'])
 def create_meet():
@@ -438,7 +438,7 @@ def create_meet():
         slide_key=get_slide_link(slide_link)
         aww_link=get_aww_link()
         meet_data(invite_id,web_id,slide_key,meet_name,aww_link,detail,slide_link)
-        line_bot_api.push_message(sent_id, TextSendMessage(text='已驗證成功~\n邀請碼是%s\n白板連結\nhttps://awwapp.com/b/%s'%(invite_id,aww_link)))
+        line_bot_api.push_message(sent_id, TextSendMessage(text='已驗證成功~\n邀請碼是%s\n趕快跟聽眾分享吧~\n白板連結(與網頁同步)\nhttps://awwapp.com/b/%s'%(invite_id,aww_link)))
         conn.commit()
         conn.close()
 

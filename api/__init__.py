@@ -95,7 +95,7 @@ def handle_message(event):
         
         line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text='已創建meeting~代碼是：\n%s'%(meet_id)))
+                TextSendMessage(text='已創建meeting~\n請至網頁輸入驗證碼吧！\n%s'%(meet_id)))
     elif re.match('[0-9]{5}$', event.message.text) != None:
         invite_id = re.match('[0-9]{5}$', event.message.text).group(0)
         
@@ -113,7 +113,7 @@ def handle_message(event):
             detail = GET_INFO(api_request[0][0],'detail')
             image_map = {
                 "type": "imagemap",
-                "baseUrl": "https://i.imgur.com/pMccyul.png",
+                "baseUrl": "https://i.imgur.com/8nTHWOe.png?1",
                 "altText": "This is an imagemap",
                 "baseSize": {
                     "width": 1040,
@@ -146,7 +146,7 @@ def handle_message(event):
             headers = {'Content-Type':'application/json','Authorization':'Bearer %s'%(line_token)}
             payload = {
                 'replyToken':event.reply_token,
-                'messages':[{"type":"text","text":"歡迎加入meeting~\n演講名稱：%s\n演講細節：%s\nPTT連結：%s"%(meet_name,detail,slide_link)},
+                'messages':[{"type":"text","text":"歡迎加入meeting~\n演講名稱：%s\n演講細節：%s\n簡報連結：%s"%(meet_name,detail,slide_link)},
                 {"type":"text","text":"請問你要匿名還是公開姓名呢?"},image_map]
                 }
             res=requests.post('https://api.line.me/v2/bot/message/reply',headers=headers,json=payload)

@@ -71,12 +71,30 @@
 				}
 			}
 		</script>
-        <script src="assets/js/jquery.min.js"></script>
-        <script src="assets/js/jquery.scrolly.min.js"></script>
-        <script src="assets/js/skel.min.js"></script>
-        <script src="assets/js/util.js"></script>
-        <script src="assets/js/main.js"></script>
-        <script src="assets/js/index.js"></script>
-        <script src="assets/js/jquery.cookie.js"></script>
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/jquery.scrolly.min.js"></script>
+		<script src="assets/js/skel.min.js"></script>
+		<script src="assets/js/util.js"></script>
+		<script src="assets/js/jquery.cookie.js"></script>
+		<script src="assets/js/main.js"></script>
+		<script src="assets/js/voting.js"></script>
+		<script src="assets/js/lib.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				var meet_name=$.cookie("MeetName");
+				var sent_id=$.cookie("SentId");
+				var slide_link=$.cookie("SlideLink");
+				var invite_id=$.cookie("InviteId");
+				var slide_key=$.cookie("SlideKey");
+
+				console.log(meet_name);
+				console.log(sent_id);
+				console.log(slide_link);
+				console.log(invite_id);
+				console.log(slide_key);
+
+				$(WebId).text(invite_id);
+			});
+		</script>
     </body>
 </html>

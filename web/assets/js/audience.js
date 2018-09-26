@@ -44,7 +44,7 @@ $(document).ready(function() {
             // var name = getName(id,i);
           }
           var item2 = '</tbody></table>';
-          $ulT.append(item+item1+item2);
+          $ulT.prepend(item+item1+item2);
           
           // message   
           if ("Notification" in window){

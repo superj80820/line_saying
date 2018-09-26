@@ -645,11 +645,19 @@ def say():
 @app.route('/user_say', methods=['GET'])
 def user_say():
     meet_id=request.args.get('meet_id')
+    timestamp=request.args.get('timestamp')
+    new_ret=[]
     
     conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
     df = pandas.read_sql_query("SELECT * FROM user_say", conn)
     ret = df.to_dict(orient='records')
-
+    if timestamp != None:
+        for item in ret:
+            if float(item['timestamp'])>float(timestamp):
+                new_ret += [item]
+        conn.commit()  
+        conn.close()
+        return jsonify(new_ret)
     conn.commit()  
     conn.close()
  

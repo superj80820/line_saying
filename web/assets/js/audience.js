@@ -25,8 +25,9 @@ $(document).ready(function() {
             // var s="";
             test_j = test_dic
             n = test_j.length
+
             var item = '<table><thead><tr><th>觀眾姓名</th><th>附加圖片</th><th>問題</th><th>留言時間</th></tr></thead>';
-            for (i=0;i<n;i++){
+            for (i=n-1;i>=0;i--){
               $.cookie("ButtonImage_"+i,test_j[i].image);
               // alert("網址 為: " + test_j[i].image);
               // var s2 = test_j[i].time.substring(0,10);

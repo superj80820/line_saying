@@ -77,10 +77,11 @@ $(document).ready(function() {
 
   function ajax_init(){
     var $ulT = $("ul[class='contect']");
+    var sent_id=$.cookie("SentId");
 
     $.ajax({
       type: 'GET',
-      url: 'https://messfar.com/line_saying_api/user_say?meet_id='+'41684',
+      url: 'https://messfar.com/line_saying_api/user_say?meet_id='+sent_id,
       dataType: 'json',
         success: function(test_dic) {
           $('table').remove();

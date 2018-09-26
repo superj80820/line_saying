@@ -95,7 +95,7 @@ def handle_message(event):
         
         line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text='已創建meeting~\n請至網頁輸入驗證碼吧！\n%s'%(meet_id)))
+                TextSendMessage(text='已創建meeting~\n到網站輸入驗證碼吧！\n%s'%(meet_id)))
     elif re.match('[0-9]{5}$', event.message.text) != None:
         invite_id = re.match('[0-9]{5}$', event.message.text).group(0)
         

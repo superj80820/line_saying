@@ -34,7 +34,7 @@ CORS(app)
 line_token = 'D9I+Oxtoll926dCqHX3bnx6fhiAqKt28n/PQYmaeGjsmG3Uq+W+tspiRQaAW6AZTQKpZuvi9VAFFpL8+EBhExS1U/zjqRCoVF2lpDwFgDvf6k9bOrlgB8fEcBJCgTd9g41oQ7iTMb3o0t2qPddQskgdB04t89/1O/w1cDnyilFU='
 line_bot_api = LineBotApi(line_token)
 handler = WebhookHandler('e840717929fb3e363919b0b31b86f056')
-FileRout=''
+FileRout='/var/www/line_saying/api/'
 #/var/www/line_saying/api/
 
 def USER_GET_MEET_ID(user_id):

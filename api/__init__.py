@@ -3,6 +3,7 @@
 #圖片新增的排序是否為最新 須測試(應該是正常)
 #vote選項請勿使用 , 不然可能會錯誤
 #目前傳送圖片的功能只有針對jpg
+#bc目前覆蓋會議的功能未寫
 
 import string
 import json
@@ -25,7 +26,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, ImageMessage, VideoMessage, AudioMessage, PostbackEvent
+    MessageEvent, TextMessage, TextSendMessage, ImageMessage, VideoMessage, AudioMessage, PostbackEvent, BeaconEvent
 )
 
 app = Flask(__name__)
@@ -34,7 +35,7 @@ CORS(app)
 line_token = 'D9I+Oxtoll926dCqHX3bnx6fhiAqKt28n/PQYmaeGjsmG3Uq+W+tspiRQaAW6AZTQKpZuvi9VAFFpL8+EBhExS1U/zjqRCoVF2lpDwFgDvf6k9bOrlgB8fEcBJCgTd9g41oQ7iTMb3o0t2qPddQskgdB04t89/1O/w1cDnyilFU='
 line_bot_api = LineBotApi(line_token)
 handler = WebhookHandler('e840717929fb3e363919b0b31b86f056')
-FileRout='/var/www/line_saying/api/'
+FileRout=''
 #/var/www/line_saying/api/
 
 def USER_GET_MEET_ID(user_id):
@@ -306,6 +307,85 @@ def handle_content_message(event):
             event.reply_token,
             TextSendMessage(text='已成功收到你的圖檔!!\n如果需要更換圖片\n再傳一張就會覆蓋囉~'))
 
+@handler.add(BeaconEvent)
+def handle_beacon(event):
+    conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
+    c = conn.cursor()
+    try:
+        bc_name=c.execute('SELECT name FROM bc WHERE id ="%s"'%(event.beacon.hwid)).fetchall()[0][0]
+    except IndexError as e1:
+        bc_name='no key'
+    print(bc_name)
+    try:
+        invite_id=c.execute('SELECT invite_id FROM meet_check WHERE bc_name ="%s"'%(bc_name)).fetchall()[0][0]
+    except IndexError as e1:
+        invite_id='no key'
+    print(invite_id)
+    conn.commit()
+    conn.close()
+        
+    if invite_id != 'no key':
+        conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
+        c = conn.cursor()
+        api_request = c.execute('SELECT api_request FROM meet_check WHERE web_pass ="pass" AND invite_id ="%s"'%(invite_id))
+        api_request = api_request.fetchall()
+        
+        try:
+            c.execute('INSERT INTO user_in_where (id,meet) VALUES ("%s","%s")'%(event.source.user_id,api_request[0][0]))
+        except:
+            c.execute('UPDATE user_in_where SET meet ="%s" WHERE id ="%s"'%(api_request[0][0],event.source.user_id))
+        slide_link = GET_INFO(api_request[0][0],'slide_link')
+        meet_name = GET_INFO(api_request[0][0],'meet_name')
+        detail = GET_INFO(api_request[0][0],'detail')
+        image_map = {
+            "type": "imagemap",
+            "baseUrl": "https://i.imgur.com/8nTHWOe.png?1",
+            "altText": "This is an imagemap",
+            "baseSize": {
+                "width": 1040,
+                "height": 170
+                },
+            "actions": [
+                {
+                "type": "message",
+                "area": {
+                    "x": 2,
+                    "y": 4,
+                    "width": 520,
+                    "height": 166
+                },
+                "text": "/public_yes"
+                },
+                {
+                "type": "message",
+                "area": {
+                    "x": 522,
+                    "y": 0,
+                    "width": 518,
+                    "height": 170
+                    },
+                "text": "/public_no"
+                }
+                ]
+            }
+
+        headers = {'Content-Type':'application/json','Authorization':'Bearer %s'%(line_token)}
+        payload = {
+            'replyToken':event.reply_token,
+            'messages':[{"type":"text","text":"歡迎加入meeting~\n演講名稱：%s\n演講細節：%s\n簡報連結：%s"%(meet_name,detail,slide_link)},
+            {"type":"text","text":"你可以由此發送問題給演講者，請問你是否願意公開你的姓名?"},image_map]
+            }
+        res=requests.post('https://api.line.me/v2/bot/message/reply',headers=headers,json=payload)
+
+        check_history = c.execute('SELECT invite_id FROM user_history WHERE id ="%s" AND invite_id ="%s"'%(event.source.user_id,invite_id))
+        check_history = check_history.fetchall()
+        print(check_history)
+        if check_history == []:
+            c.execute('INSERT INTO user_history (id,invite_id,timestamp,meet_name,detail) VALUES ("%s","%s","%s","%s","%s")'%(event.source.user_id,invite_id,str(time.time()),meet_name,detail))
+
+        conn.commit()
+        conn.close()
+
 @handler.add(PostbackEvent)
 def handle_postback(event):
     vote_dict = ast.literal_eval(event.postback.data)
@@ -356,7 +436,7 @@ def handle_postback(event):
             
 @app.route('/create_meet', methods=['POST'])
 def create_meet():
-    def meet_data(invite_id,web_id,slide_key,meet_name,aww_link,detail,slide_link):
+    def meet_data(bc,invite_id,web_id,slide_key,meet_name,aww_link,detail,slide_link):
         '''
         分類group_id 目前是1筆記,2文章,3佳句,4公式
         '''
@@ -365,7 +445,7 @@ def create_meet():
         user_data = 'name TEXT,id TEXT,say TEXT,timestamp TEXT,image TEXT'
         speech_data = 'say TEXT,timestamp TEXT,type TEXT'
         user_note_data = 'note TEXT,timestamp TEXT UNIQUE,type TEXT,id TEXT,group_id TEXT'
-        c.execute('CREATE TABLE info(meet_name TEXT,invite_id TEXT,web_id TEXT,slide_key TEXT,aww_link TEXT,detail TEXT,slide_link TEXT)')
+        c.execute('CREATE TABLE info(bc TEXT,meet_name TEXT,invite_id TEXT,web_id TEXT,slide_key TEXT,aww_link TEXT,detail TEXT,slide_link TEXT)')
         c.execute('CREATE TABLE user_say(%s)'%(user_data))
         c.execute('CREATE TABLE speech_say(%s)'%(speech_data))
         c.execute('CREATE TABLE user_note(%s)'%(user_note_data))
@@ -422,6 +502,11 @@ def create_meet():
     web_id=request.get_json()['web_id']
     slide_link=request.get_json()['slide_link']
     detail=request.get_json()['detail']
+    try:
+        bc=request.get_json()['bc']
+    except KeyError as e1:
+        bc=''
+        print('no key'+str(e1))
 
     conn = sqlite.connect('%sdata/db/create_check.db'%(FileRout))
     c = conn.cursor()
@@ -432,17 +517,19 @@ def create_meet():
     if  ans != [] and is_pass[0][0] != 'pass':
         sent_id=list(ans)[0][2]
         c.execute('UPDATE meet_check SET web_pass ="pass" WHERE api_request ="%s"'%(web_id))
+        c.execute('UPDATE meet_check SET bc_name =NULL WHERE bc_name ="%s"'%(bc))
+        c.execute('UPDATE meet_check SET bc_name ="%s" WHERE api_request ="%s"'%(bc,web_id))
         invite_id = c.execute('SELECT invite_id FROM meet_check WHERE api_request ="%s"'%(web_id))
         invite_id = invite_id.fetchall()[0][0]
 
         slide_key=get_slide_link(slide_link)
         aww_link=get_aww_link()
-        meet_data(invite_id,web_id,slide_key,meet_name,aww_link,detail,slide_link)
+        meet_data(bc,invite_id,web_id,slide_key,meet_name,aww_link,detail,slide_link)
         line_bot_api.push_message(sent_id, TextSendMessage(text='已驗證成功~\n邀請碼是%s\n趕快跟聽眾分享吧~\n白板連結(與網頁同步)\nhttps://awwapp.com/b/%s'%(invite_id,aww_link)))
         conn.commit()
         conn.close()
 
-        ret={'invite_id':invite_id,"web_id":web_id,"slide_key":slide_key,"meet_name":meet_name,"aww_link":aww_link,'detail':detail,'slide_link':slide_link}
+        ret={'bc':bc,'invite_id':invite_id,"web_id":web_id,"slide_key":slide_key,"meet_name":meet_name,"aww_link":aww_link,'detail':detail,'slide_link':slide_link}
         return jsonify(ret)
     else:
         conn.commit()

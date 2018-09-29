@@ -1,6 +1,5 @@
 function say_something(){
     var sent_id=$.cookie("SentId");
-
     var frm_element = document.getElementById ('SaySomething');
     var formData = new FormData(frm_element);
 
@@ -17,7 +16,9 @@ function say_something(){
                 console.log("success");
                 console.log(data);
                 $('#box').html('&nbsp&nbsp&nbsp&nbsp送出完成');
-                setTimeout("$('#box').html('');",2000)
+                setTimeout("$('#box').html('');",2000);
+                $('#say').val("");
+                $('#image').val("")
             },
             error: function(data){
                 console.log("error");

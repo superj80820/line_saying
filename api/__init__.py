@@ -32,9 +32,9 @@ from linebot.models import (
 app = Flask(__name__)
 CORS(app)
 
-line_token = 'D9I+Oxtoll926dCqHX3bnx6fhiAqKt28n/PQYmaeGjsmG3Uq+W+tspiRQaAW6AZTQKpZuvi9VAFFpL8+EBhExS1U/zjqRCoVF2lpDwFgDvf6k9bOrlgB8fEcBJCgTd9g41oQ7iTMb3o0t2qPddQskgdB04t89/1O/w1cDnyilFU='
+line_token = 'vxJfXmnKPVhcOp7rQipUTabXQp/Zc227v0dRT0Am+a4pl/nr6hUDLRsJGoe8aY8/1MW4sqyo+NQ7+WkAH+Madtn4DlYvzaKOqSQE+uSCtmHIPLTdguf3UVjyQ8XJdiLg8Otg2imHALz2mdhXYU8yYwdB04t89/1O/w1cDnyilFU='
 line_bot_api = LineBotApi(line_token)
-handler = WebhookHandler('e840717929fb3e363919b0b31b86f056')
+handler = WebhookHandler('0ef7975dd3724126dec33c34af95d46a')
 FileRout=''
 #/var/www/line_saying/api/
 
@@ -258,36 +258,36 @@ def handle_message(event):
         print(event.timestamp)
         test=line_bot_api.get_profile(event.source.user_id).display_name
         print(test)
-        headers = {'Content-Type':'application/json','Authorization':'Bearer %s'%(line_token)}
-        payload = {
-            'replyToken':event.reply_token,
-            'messages':[{
-                "type": "template",
-                "altText": "this is a buttons template",
-                "template": {
-                    "type": "buttons",
-                    "actions": [
-                    {
-                        "type": "uri",
-                        "label": "動作 1",
-                        "uri": "line://msg/text/?asfd"
-                    },
-                    {
-                        "type": "message",
-                        "label": "動作 2",
-                        "text": "動作 2"
-                    }
-                    ],
-                    "thumbnailImageUrl": "https://i.imgur.com/lSUSmnQ.png",
-                    "title": "標題",
-                    "text": "文字"
-                }
-                }]
-            }
-        res=requests.post('https://api.line.me/v2/bot/message/reply',headers=headers,json=payload)
-        # line_bot_api.reply_message(
-        #         event.reply_token,
-        #         TextSendMessage(text='已接收'))
+        # headers = {'Content-Type':'application/json','Authorization':'Bearer %s'%(line_token)}
+        # payload = {
+        #     'replyToken':event.reply_token,
+        #     'messages':[{
+        #         "type": "template",
+        #         "altText": "this is a buttons template",
+        #         "template": {
+        #             "type": "buttons",
+        #             "actions": [
+        #             {
+        #                 "type": "uri",
+        #                 "label": "動作 1",
+        #                 "uri": "line://msg/text/?asfd"
+        #             },
+        #             {
+        #                 "type": "message",
+        #                 "label": "動作 2",
+        #                 "text": "動作 2"
+        #             }
+        #             ],
+        #             "thumbnailImageUrl": "https://i.imgur.com/lSUSmnQ.png",
+        #             "title": "標題",
+        #             "text": "文字"
+        #         }
+        #         }]
+        #     }
+        # res=requests.post('https://api.line.me/v2/bot/message/reply',headers=headers,json=payload)
+        line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text='已接收'))
 
 @handler.add(MessageEvent, message=(ImageMessage))
 def handle_content_message(event):
@@ -390,6 +390,7 @@ def handle_beacon(event):
 def handle_postback(event):
     vote_dict = ast.literal_eval(event.postback.data)
     meet_id=USER_GET_MEET_ID(event.source.user_id)
+    print(vote_dict)
 
     if vote_dict['type'] == 'vote': 
         conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
@@ -555,20 +556,27 @@ def meet_info():
 def post_vote():
     meet_id=request.get_json()['meet_id']
     vote_data=request.get_json()['vote_data']
-    vote_name = vote_data['template']['title']
+    vote_name = vote_data['body']['contents'][0]['text']
+    print(vote_name)
+    print(vote_data)
     number_set=['one','two','three','four']
     
     conn = sqlite.connect('%sdata/db/%s.db'%(FileRout,meet_id))
     c = conn.cursor()
     data = 'id TEXT DEFAULT "",labels TEXT,'
     insert_data = ''
-    for item in list(range(0,len(vote_data['template']['actions']))):
+    print(len(vote_data['footer']['contents'])-1)
+    for item in list(range(0,len(vote_data['footer']['contents'])-1)):
         data += '%s TEXT DEFAULT 0,'%(number_set[item])
-        insert_data += '%s,'%(vote_data['template']['actions'][item]['label'])
-        data_temp = vote_data['template']['actions'][item]['data']
+        insert_data += '%s,'%(vote_data['footer']['contents'][item]['action']['label'])
+        data_temp = vote_data['footer']['contents'][item]['action']['data']
+        print(vote_data['footer']['contents'][item]['action'])
         data_temp = data_temp[0:len(data_temp)-1]
-        vote_data['template']['actions'][item]['data'] = "%s,'name':'%s'}"%(data_temp,vote_name)
+        vote_data['footer']['contents'][item]['action']['data'] = "%s,'name':'%s'}"%(data_temp,vote_name)
     data = data[0:len(data)-1]
+    print(data)
+    print(insert_data)
+    # print(data_temp)
     c.execute('CREATE TABLE vote_%s(%s)'%(vote_name,data))
     c.execute('INSERT INTO vote_%s (labels) VALUES ("%s")'%(vote_name,insert_data))
     c.execute('INSERT INTO vote_sort (vote_id) VALUES ("%s")'%(vote_name))
@@ -580,14 +588,20 @@ def post_vote():
     user_id = c.execute('SELECT id FROM user_in_where WHERE meet ="%s"'%(meet_id))
     user_id = user_id.fetchall()
     
+    test={"type": "flex",
+    "altText": "This is a Flex Message",
+    "contents":vote_data
+    }
+    # print(event.source.user_id)
     for item in user_id:
+        print(item[0])
         headers = {'Content-Type':'application/json','Authorization':'Bearer %s'%(line_token)}
         payload = {
             'to':item[0],
-            'messages':[vote_data]
+            'messages':[test]
             }
         res=requests.post('https://api.line.me/v2/bot/message/push',headers=headers,json=payload)
-    
+        print(res.text)
     conn.commit()  
     conn.close()
 

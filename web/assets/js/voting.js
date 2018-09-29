@@ -19,12 +19,12 @@ $(document).ready(function() {
       success: function(test_dic) {
         var i;
         n = test_dic.length
-        if (n>0){
-          $('#vote_tite').hide();
-        }
-        else{
+        if (n<=0){
           $('#vote').hide();
           $('#allvote').hide();
+        }
+        else{
+          $('#vote_tite').hide();
         }
         for (i=1;i<=n;i++){
           item = '<h3>'+test_dic[i-1].vote_name+'<b style=font-size:15px>&emsp;<span id=person'+i+'></span>&nbsp&nbsp投票&nbsp&nbsp&nbsp&nbsp<input type=button id=sAdd value=Add></b></h3><span id=T'+i+'_option0></span></div><div><span id=T'+i+'_option1></span></div><div><span id=T'+i+'_option2></span><br /><br />';

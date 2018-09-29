@@ -32,9 +32,9 @@ from linebot.models import (
 app = Flask(__name__)
 CORS(app)
 
-line_token = 'vxJfXmnKPVhcOp7rQipUTabXQp/Zc227v0dRT0Am+a4pl/nr6hUDLRsJGoe8aY8/1MW4sqyo+NQ7+WkAH+Madtn4DlYvzaKOqSQE+uSCtmHIPLTdguf3UVjyQ8XJdiLg8Otg2imHALz2mdhXYU8yYwdB04t89/1O/w1cDnyilFU='
+line_token = 'D9I+Oxtoll926dCqHX3bnx6fhiAqKt28n/PQYmaeGjsmG3Uq+W+tspiRQaAW6AZTQKpZuvi9VAFFpL8+EBhExS1U/zjqRCoVF2lpDwFgDvf6k9bOrlgB8fEcBJCgTd9g41oQ7iTMb3o0t2qPddQskgdB04t89/1O/w1cDnyilFU='
 line_bot_api = LineBotApi(line_token)
-handler = WebhookHandler('0ef7975dd3724126dec33c34af95d46a')
+handler = WebhookHandler('e840717929fb3e363919b0b31b86f056')
 FileRout=''
 #/var/www/line_saying/api/
 

@@ -114,6 +114,7 @@ $(document).ready(function() {
     var slide_link=$.cookie("SlideLink");
     var invite_id=$.cookie("InviteId");
     var slide_key=$.cookie("SlideKey");
+    var meet_detail=$.cookie("MeetDetail");
 
     var actions = [];
 
@@ -123,15 +124,25 @@ $(document).ready(function() {
         // None
       }else{
         actions.push({
-          "type": "postback",
-          "label": str,
-          "data": "{'type':'vote','index':'"+i+"','label':'"+str+"'}"
+          "type": "button",
+          "style": "link",
+          "height": "sm",
+          "action": {"type": "postback",
+                    "label": str,
+                    "data": "{'type':'vote','index':'"+i+"','label':'"+str+"'}"
+        }
       });
       }
     }
     
     console.log(actions)
     
+//     {
+//       "meet_id":"45156",
+//       "vote_data":
+      
+// }
+
     $.ajax({
       type: 'POST',
       url: 'https://messfar.com/line_saying_api/vote',
@@ -140,16 +151,79 @@ $(document).ready(function() {
       data: JSON.stringify({
         "meet_id":sent_id,
         "vote_data":{
-          "type": "template",
-          "altText": "This is a buttons template",
-          "template": {
-            "type": "buttons",
-            "thumbnailImageUrl": "https://example.com/bot/images/image.jpg",
-            "title": $('#title_na').val(),
-            "text": "暫無設定",
-            "actions": actions
+          "type": "bubble",
+          "hero": {
+            "type": "image",
+            "url": "https://i.imgur.com/oX81S1U.png",
+            "size": "full",
+            "aspectRatio": "20:13",
+            "aspectMode": "cover",
+            "action": {
+              "type": "uri",
+              "uri": "http://linecorp.com/"
+            }
+          },
+          "body": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": $('#title_na').val(),
+                "weight": "bold",
+                "size": "xl"
+              },
+              {
+                "type": "box",
+                "layout": "vertical",
+                "margin": "lg",
+                "spacing": "sm",
+                "contents": [
+                  {
+                    "type": "box",
+                    "layout": "baseline",
+                    "spacing": "sm",
+                    "contents": [
+                      {
+                        "type": "text",
+                        "text": "細節：",
+                        "color": "#aaaaaa",
+                        "size": "sm",
+                        "flex": 1
+                      },
+                      {
+                        "type": "text",
+                        "text": meet_detail,
+                        "wrap": true,
+                        "color": "#666666",
+                        "size": "sm",
+                        "flex": 5
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "footer": {
+            "type": "box",
+            "layout": "vertical",
+            "spacing": "sm",
+            "contents": actions,
+            "flex": 0
           }
         }
+        // {
+        //   "type": "template",
+        //   "altText": "This is a buttons template",
+        //   "template": {
+        //     "type": "buttons",
+        //     "thumbnailImageUrl": "https://example.com/bot/images/image.jpg",
+        //     "title": $('#title_na').val(),
+        //     "text": "暫無設定",
+        //     "actions": actions
+        //   }
+        // }
         
     }),
       complete: function(test_dic) {        
@@ -159,3 +233,4 @@ $(document).ready(function() {
   }); 
 
 });
+
